@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:namer_app/screens/join_receipt.dart';
-import 'package:namer_app/screens/edit_expense.dart';
-import 'package:namer_app/screens/view_receipts.dart';
+import 'package:quirky_quarters/screens/join_receipt.dart';
+import 'package:quirky_quarters/screens/edit_expense.dart';
+import 'package:quirky_quarters/screens/view_receipts.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
