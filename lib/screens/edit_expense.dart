@@ -1,8 +1,36 @@
 import 'package:flutter/material.dart';
 
+class ItemAndCost<T1, T2> {
+  String item;
+  double cost;
 
-class EditExpenseRoute extends StatelessWidget {
+  ItemAndCost(this.item, this.cost);
+}
+
+class EditExpenseRoute extends StatefulWidget {
   const EditExpenseRoute({super.key});
+
+  @override
+  State<EditExpenseRoute> createState() => _EditExpenseRouteState();
+}
+
+class _EditExpenseRouteState extends State<EditExpenseRoute> {
+  var itemsAndCosts = [];
+
+  final TextEditingController itemController = TextEditingController();
+  final TextEditingController costController = TextEditingController();
+
+  addNewItemAndCost() {
+    var item = itemController.text;
+    var cost = double.tryParse(costController.text);
+    if (item.isNotEmpty && cost != null) {
+      setState(() {
+        itemsAndCosts.add(ItemAndCost(item, cost));
+        itemController.clear();
+        costController.clear();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +46,7 @@ class EditExpenseRoute extends StatelessWidget {
                 ),
             child: Column(
               children: [
-                // TODO: Make expense title editable.
+                // TODO: [DEV] Make expense title editable.
                 Text("Expense Title", style: Theme.of(context).textTheme.headlineLarge,),
                 SizedBox(height: 30),
                 Row(
@@ -26,21 +54,20 @@ class EditExpenseRoute extends StatelessWidget {
                       SizedBox(width: 10,),
                       Column(
                         children: [
-                          Text("",
+                          // TODO: [UI] Add minimum width of column for when we don't 
+                          // have any items yet.
+                          Text("      ",
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
-                          // TODO: Fill in functionality for onPressed to remove item.
-                          IconButton(
-                            icon: Icon(Icons.remove_circle_outline),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.remove_circle_outline),
-                            onPressed: () {},
-                          )
+                          for (var i = 0; i < itemsAndCosts.length; i++)
+                            // TODO: [DEV] Fill in functionality for onPressed to remove item.
+                            IconButton(
+                              icon: Icon(Icons.remove_circle_outline),
+                              onPressed: () {},
+                            ),
                         ]
                       ),
-                      // TODO: Make spacing between columns (buttons, items, costs) 
+                      // TODO: [UI] Make spacing between columns (buttons, items, costs) 
                       // dynamic to screen size. See Flexible / Expanded widget.
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,8 +75,8 @@ class EditExpenseRoute extends StatelessWidget {
                           Text("Item",
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
-                          Text("Lamb"),
-                          Text("Steak"),
+                          for (var pair in itemsAndCosts) 
+                            Text(pair.item),
                         ]
                       ),
                       SizedBox(width: 104,),
@@ -59,8 +86,8 @@ class EditExpenseRoute extends StatelessWidget {
                           Text("Cost",
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
-                          Text("\$30"),
-                          Text("\$100"),
+                          for (var pair in itemsAndCosts) 
+                            Text("\$${pair.cost.toStringAsFixed(2)}"),
                         ]
                       ),
                     ]
@@ -68,16 +95,18 @@ class EditExpenseRoute extends StatelessWidget {
                 Row(
                   children: [
                     SizedBox(width: 10,),
-                    // TODO: Fill in functionality for onPressed to add item.
                     IconButton(
                             icon: Icon(Icons.add_circle_outline),
-                            onPressed: () {},
+                            onPressed: () {
+                              addNewItemAndCost();
+                            },
                     ),
-                    // TODO: Update container to Flexible / Expanded widget to match other items.
+                    // TODO: [UI] Update container to Flexible / Expanded widget to match other items.
                     Container(
                       width: 120,
                       height: Theme.of(context).textTheme.headlineSmall!.fontSize,
                       child: TextField(
+                        controller: itemController,
                         style: Theme.of(context).textTheme.headlineSmall,
                         decoration: InputDecoration(hintText: 'New Item'),
                       ),
@@ -87,6 +116,7 @@ class EditExpenseRoute extends StatelessWidget {
                       width: 120,
                       height: Theme.of(context).textTheme.headlineSmall!.fontSize,
                       child: TextField(
+                        controller: costController,
                         style: Theme.of(context).textTheme.headlineSmall,
                         decoration: InputDecoration(hintText: 'Cost'),
                       ),
@@ -94,7 +124,7 @@ class EditExpenseRoute extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 40),
-                // TODO: Adjust Tax/Tip title and textbox alignment.
+                // TODO: [UI] Adjust Tax/Tip title and textbox alignment.
                 Row(
                   children: [
                     SizedBox(width: 25,),
@@ -138,17 +168,17 @@ class EditExpenseRoute extends StatelessWidget {
                     ),
                   ]
                 ),
-                // TODO: Make Next/Camera buttons appear fixed at the bottom of
+                // TODO: [UI] Make Next/Camera buttons appear fixed at the bottom of
                 // the screen. This means we can still see them when we scroll.
                 SizedBox(height: 250),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
-                  // TODO: Fix spacing between 'Next' button and camera icon
+                  // TODO: [UI] Fix spacing between 'Next' button and camera icon
                   children: [
                     Spacer(flex: 4,),
                     ElevatedButton(
                       onPressed: () {
-                        // TODO: Implement Next button functionality
+                        // TODO: [DEV] Implement Next button functionality
                       },
                       child: Text('Next'),
                     ),
@@ -156,7 +186,7 @@ class EditExpenseRoute extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.camera_alt_outlined),
                       onPressed: () {
-                        // TODO: Implement camera icon functionality
+                        // TODO: [DEV] Implement camera icon functionality
                       },
                     ),
                     Spacer(flex: 1), 
