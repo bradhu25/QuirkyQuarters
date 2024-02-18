@@ -17,6 +17,7 @@ class EditExpenseRoute extends StatefulWidget {
 class _EditExpenseRouteState extends State<EditExpenseRoute> {
   var itemsAndCosts = [];
 
+  final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
   final TextEditingController itemController = TextEditingController();
   final TextEditingController costController = TextEditingController();
 
@@ -30,6 +31,12 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
         costController.clear();
       });
     }
+  }
+
+  removeItemAndCost(int i) {
+    setState(() {
+        itemsAndCosts.removeAt(i);
+    });
   }
 
   @override
@@ -46,8 +53,20 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                 ),
             child: Column(
               children: [
-                // TODO: [DEV] Make expense title editable.
-                Text("Expense Title", style: Theme.of(context).textTheme.headlineLarge,),
+                SizedBox(height: 20,),
+                Container(
+                  width: 300,
+                  height: Theme.of(context).textTheme.headlineLarge!.fontSize,
+                  child: TextField(
+                    controller: expenseTitleController,
+                    style: Theme.of(context).textTheme.headlineLarge,
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      hintText: 'Expense Title',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
                 SizedBox(height: 30),
                 Row(
                     children: [
@@ -60,10 +79,11 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
                           for (var i = 0; i < itemsAndCosts.length; i++)
-                            // TODO: [DEV] Fill in functionality for onPressed to remove item.
                             IconButton(
                               icon: Icon(Icons.remove_circle_outline),
-                              onPressed: () {},
+                              onPressed: () {
+                                removeItemAndCost(i);
+                              },
                             ),
                         ]
                       ),
