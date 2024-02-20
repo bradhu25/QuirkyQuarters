@@ -12,15 +12,15 @@ class ItemCostName {
   ItemCostName(this.item, this.cost, this.name);
 }
 
-class ReceiptSummaryRoute extends StatefulWidget {
-  const ReceiptSummaryRoute({super.key});
+class SplitSummaryRoute extends StatefulWidget {
+  const SplitSummaryRoute({super.key});
 
   @override
-  State<ReceiptSummaryRoute> createState() => _ReceiptSummaryRouteState();
+  State<SplitSummaryRoute> createState() => _SplitSummaryRouteState();
 }
 
-class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
-  // this should be fethced from the receipt_summary as variables rather than hard coded
+class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
+  // this should be fetched from the receipt_summary as variables rather than hard coded
   List<ItemCostName> itemsCostsNames = [
     ItemCostName("Lamb Chops", 30.00, "Bradley"),
     ItemCostName("Steak", 50.00, "Gaby"),
@@ -66,7 +66,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Receipt Summary'),
+        title: const Text('Split Summary'),
       ),
       body: ListView(
         children: [
