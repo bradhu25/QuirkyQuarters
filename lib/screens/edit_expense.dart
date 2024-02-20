@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quirky_quarters/screens/receipt_summary.dart';
 
 class ItemAndCost<T1, T2> {
   String item;
@@ -198,9 +199,13 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                     Spacer(flex: 4,),
                     ElevatedButton(
                       onPressed: () {
-                        // TODO: [DEV] Implement Next button functionality
+                        // TODO: [DEV] Implement Next button functionality.
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ReceiptSummaryRoute()),
+                        );
                       },
-                      child: Text('Next'),
+                      child: const Text('Next'),
                     ),
                     Spacer(flex: 2), 
                     IconButton(
