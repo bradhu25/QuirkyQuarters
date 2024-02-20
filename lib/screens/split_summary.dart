@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:quirky_quarters/screens/join_receipt.dart';
-import 'package:quirky_quarters/screens/edit_expense.dart';
-import 'package:quirky_quarters/screens/receipt_summary.dart';
-import 'package:quirky_quarters/screens/view_receipts.dart';
 
+// TODO: [DEV] Move ItemCostName to file for shared classes.
 class ItemCostName {
   String item;
   double cost;
@@ -20,7 +17,7 @@ class SplitSummaryRoute extends StatefulWidget {
 }
 
 class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
-  // this should be fetched from the receipt_summary as variables rather than hard coded
+  // TODO: [DEV] Fetch using Firebase.
   List<ItemCostName> itemsCostsNames = [
     ItemCostName("Lamb Chops", 30.00, "Bradley"),
     ItemCostName("Steak", 50.00, "Gaby"),
@@ -35,6 +32,8 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
   void initState() {
     super.initState();
     // Organize items by payer's name
+    // TODO: [DEV] Consider case where item has not been tagged. We could still
+    // have those items in a drop down with the `name' as "Untagged Items".
     for (var item in itemsCostsNames) {
       final name = item.name;
       if (itemsByPayer.containsKey(name)) {
