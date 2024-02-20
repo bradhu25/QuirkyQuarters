@@ -199,7 +199,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                     Spacer(flex: 4,),
                     ElevatedButton(
                       onPressed: () {
-                        // TODO: [DEV] Implement Next button functionality.
+                        // TODO: [DEV] Implement Next button functionality and ensure cannot advance without filled out expenses.
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const ReceiptSummaryRoute()),

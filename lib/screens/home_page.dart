@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/join_receipt.dart';
 import 'package:quirky_quarters/screens/edit_expense.dart';
-import 'package:quirky_quarters/screens/receipt_summary.dart';
 import 'package:quirky_quarters/screens/view_receipts.dart';
 
 class HomePage extends StatelessWidget {
@@ -43,17 +42,6 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ViewReceiptsRoute()),
-                );
-              },
-            ),
-
-            SizedBox(height: 10),
-            ElevatedButton(
-              child: const Text('DEV'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ReceiptSummaryRoute()),
                 );
               },
             ),
