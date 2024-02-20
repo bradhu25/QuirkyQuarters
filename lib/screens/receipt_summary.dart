@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/edit_expense.dart';
+import 'package:quirky_quarters/screens/split_summary.dart';
 
 // TODO: [DEV] Add ItemCostName to file with reusable classes.
 class ItemCostName<T1, T2> {
@@ -201,7 +202,12 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                   Expanded(
                     child: ElevatedButton(
                       // TODO: [DEV] Implement Next functionality.
-                      onPressed: () {}, 
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SplitSummaryRoute()),
+                        );
+                      }, 
                       child: Text("Next")
                     ),
                   ),
