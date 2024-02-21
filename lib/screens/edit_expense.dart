@@ -72,10 +72,11 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                 Row(
                     children: [
                       SizedBox(width: 10,),
+                      Container()
                       Column(
                         children: [
                           // TODO: [UI] Add minimum width of column for when we don't 
-                          // have any items yet.
+                          // have any items yet. [Victoria]
                           Text("      ",
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),

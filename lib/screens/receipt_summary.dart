@@ -138,7 +138,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                           ]
                         ),
                         for (var i = 0; i < itemsCostsNames.length; i++)
-                          // TODO: [UI] Make the highlight prettier (theme color, non-rectangular, whatever else) [Iris]
+                          // TODO / TEST: [UI] Make the highlight prettier (theme color, non-rectangular, whatever else) [Iris]
                           GestureDetector(
                             onTap: () => selectItem(i),
                             child: Container(
