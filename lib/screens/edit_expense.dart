@@ -71,6 +71,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                 ),
                 SizedBox(height: 30),
                 Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(width: 10,),
                       Container(
@@ -97,6 +98,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                       // dynamic to screen size. See Flexible / Expanded widget. [Victoria]
                       Expanded(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text("Item", style: Theme.of(context).textTheme.headlineMedium),
                             for (var pair in itemsAndCosts) 
@@ -109,6 +111,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                       ),
                       Expanded(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text("Cost", style: Theme.of(context).textTheme.headlineMedium),
                             for (var pair in itemsAndCosts) 
@@ -158,49 +161,59 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                 ),
                 SizedBox(height: 40),
                 // TODO: [UI] Adjust Tax/Tip title and textbox alignment.
-                Row(
-                  children: [
-                    SizedBox(width: 25,),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start, // Align row items to the start
                       children: [
-                        Text("Tax: ",
+                        SizedBox(width: 25), // Space before the label
+                        Text(
+                          "Tax:",
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                        SizedBox(height: 15),
-                        Text("Tip: ",
-                          style: Theme.of(context).textTheme.headlineSmall,
+                        Expanded(
+                          child: SizedBox(width: 25), // Optional, for additional space between label and field if needed
                         ),
-                      ]
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
                         Container(
-                          width: 120,
-                          height: Theme.of(context).textTheme.headlineSmall!.fontSize,
+                          width: 120, // Fixed width for the TextField container
                           child: TextField(
-                            style: Theme.of(context).textTheme.headlineSmall,
+                            textAlign: TextAlign.center, // Center text within the TextField
                             decoration: InputDecoration(
                               hintText: 'Tax',
+                              isDense: true, // Makes the TextField more compact
+                              contentPadding: EdgeInsets.all(8), // Adjust padding inside the TextField
                             ),
+                            style: Theme.of(context).textTheme.headlineSmall,
                           ),
                         ),
-                        SizedBox(height: 25,),
+                        Expanded(child: Container()), // Ensures the TextField stays centered in the overall row
+                      ],
+                    ),
+                    SizedBox(height: 15), // Space between the Tax and Tip rows
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start, // Align row items to the start
+                      children: [
+                        SizedBox(width: 25), // Space before the label
+                        Text(
+                          "Tip:",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        Expanded(
+                          child: SizedBox(width: 25), // Optional, for additional space between label and field if needed
+                        ),
                         Container(
-                          width: 120,
-                          height: Theme.of(context).textTheme.headlineSmall!.fontSize,
+                          width: 120, // Fixed width for the TextField container
                           child: TextField(
-                            style: Theme.of(context).textTheme.headlineSmall,
+                            textAlign: TextAlign.center, // Center text within the TextField
                             decoration: InputDecoration(
                               hintText: 'Tip',
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(8),
                             ),
+                            style: Theme.of(context).textTheme.headlineSmall,
                           ),
                         ),
-                      ]
+                        Expanded(child: Container()), // Ensures the TextField stays centered in the overall row
+                      ],
                     ),
-                  ]
-                ),
                 // TODO: [UI] Make Next/Camera buttons appear fixed at the bottom of
                 // the screen. This means we can still see them when we scroll.
                 SizedBox(height: 250),
