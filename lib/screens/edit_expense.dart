@@ -186,40 +186,37 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                     ],
                   ),
                 ),
-                
-                // TODO: [UI] Make Next/Camera buttons appear fixed at the bottom of
-                // the screen. This means we can still see them when we scroll.
-                SizedBox(height: 250),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
-                  // TODO: [UI] Fix spacing between 'Next' button and camera icon
-                  children: [
-                    Spacer(flex: 4,),
-                    ElevatedButton(
-                      onPressed: () {
-                        // TODO: [DEV] Implement Next button functionality and ensure cannot advance without filled out expenses.
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const ReceiptSummaryRoute()),
-                        );
-                      },
-                      child: const Text('Next'),
-                    ),
-                    Spacer(flex: 2), 
-                    IconButton(
-                      icon: Icon(Icons.camera_alt_outlined),
-                      onPressed: () {
-                        // TODO: [DEV] Implement camera icon functionality
-                      },
-                    ),
-                    Spacer(flex: 1), 
-                  ],
-                ),
               ],
             ),
           ),
         ),
-      )
+      ),
+          bottomNavigationBar: BottomAppBar(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // TODO: [DEV] Implement Next button functionality and ensure it does not proceed without fields
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ReceiptSummaryRoute()),
+                      );
+                    },
+                    child: const Text('Next'),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.camera_alt_outlined),
+                    onPressed: () {
+                      // TODO: [DEV] Implement camera icon functionality
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
     );
   }
 }
