@@ -70,32 +70,33 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child(
-                      Text("Expense Title",
-                      style: Theme.of(context).textTheme.headlineLarge,
-                      textAlign: TextAlign.center,
+                  mainAxisAlignment: MainAxisAlignment.center, // Center row contents
+                  children: [
+                    Expanded( // Use Expanded instead of Flexible if you want the text to take all available space
+                      child: Text(
+                        "Expense Title",
+                        style: Theme.of(context).textTheme.headlineLarge,
+                        textAlign: TextAlign.center,
                       ),
-                    )
-                  ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
                   // TODO: [UI] Consider wrapping the text + edit widget to 
                   // prevent overflow (see Expanded/Flexible), and also center
                   // the "Expense Title" rather than entire row w/ Edit Icon [Victoria]
                   //hello
                   // hi!
                   //TODO: [DEV] Load expense title in from Firebase
-                  IconButton(icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
-                      );
-                    },
-                  )
-                ]
-              ),
+                  
               SizedBox(height: 15),
               Row(
                 children: [

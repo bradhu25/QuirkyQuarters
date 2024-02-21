@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/receipt_summary.dart';
+import 'dart:math';
 
 class ItemAndCost<T1, T2> {
   String item;
@@ -90,31 +91,35 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                               ),
                           ]
                         ),
-                      )
+                      ),
       
                       // TODO: [UI] Make spacing between columns (buttons, items, costs) 
                       // dynamic to screen size. See Flexible / Expanded widget. [Victoria]
                       Expanded(
-                        flex: 1, 
                         child: Column(
                           children: [
                             Text("Item", style: Theme.of(context).textTheme.headlineMedium),
                             for (var pair in itemsAndCosts) 
-                              Text(pair.item),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.01), // Dynamic bottom padding based on screen height
+                                child: Text(pair.item),
+                              ),
                           ],
                         ),
                       ),
                       Expanded(
-                        flex: 1, 
                         child: Column(
                           children: [
                             Text("Cost", style: Theme.of(context).textTheme.headlineMedium),
                             for (var pair in itemsAndCosts) 
-                              Text("\$${pair.cost.toStringAsFixed(2)}"),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.01), // Dynamic bottom padding based on screen height
+                                child: Text("\$${pair.cost.toStringAsFixed(2)}"),
+                              ),
                           ],
                         ),
                       ),
-                    ]
+                    ],
                   ),
                 Row(
                   children: [
@@ -126,23 +131,27 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                             },
                     ),
                     // TODO: [UI] Update container to Flexible / Expanded widget to match other items.
-                    Container(
-                      width: 120,
-                      height: Theme.of(context).textTheme.headlineSmall!.fontSize,
-                      child: TextField(
-                        controller: itemController,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                        decoration: InputDecoration(hintText: 'New Item'),
+                    Flexible(
+                      flex: 2, // Adjust the flex factor as needed for your design
+                      child: Container(
+                        height: Theme.of(context).textTheme.headlineSmall!.fontSize,
+                        child: TextField(
+                          controller: itemController,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          decoration: InputDecoration(hintText: 'New Item'),
+                        ),
                       ),
                     ),
-                    SizedBox(width: 50),
-                    Container(
-                      width: 120,
-                      height: Theme.of(context).textTheme.headlineSmall!.fontSize,
-                      child: TextField(
-                        controller: costController,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                        decoration: InputDecoration(hintText: 'Cost'),
+                    SizedBox(width: 50), // Consider using a smaller width or a Flexible spacer for responsiveness
+                    Flexible(
+                      flex: 2, // Adjust the flex factor as needed for your design
+                      child: Container(
+                        height: Theme.of(context).textTheme.headlineSmall!.fontSize,
+                        child: TextField(
+                          controller: costController,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          decoration: InputDecoration(hintText: 'Cost'),
+                        ),
                       ),
                     ),
                   ],
