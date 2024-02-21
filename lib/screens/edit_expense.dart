@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/receipt_summary.dart';
-import 'dart:math';
 
 class ItemAndCost<T1, T2> {
   String item;
@@ -71,149 +70,123 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                 ),
                 SizedBox(height: 30),
                 Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(width: 10,),
-                      Container(
-                        width: max(MediaQuery.of(context).size.width * 0.1, 100),
-                        child: Column(
-                          children: [
-                            // TODO: [UI] Add minimum width of column for when we don't 
-                            // have any items yet. [Victoria]
-                            Text("      ",
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            for (var i = 0; i < itemsAndCosts.length; i++)
-                              IconButton(
-                                icon: Icon(Icons.remove_circle_outline),
-                                onPressed: () {
-                                  removeItemAndCost(i);
-                                },
-                              ),
-                          ]
-                        ),
-                      ),
-      
-                      // TODO: [UI] Make spacing between columns (buttons, items, costs) 
-                      // dynamic to screen size. See Flexible / Expanded widget. [Victoria]
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text("Item", style: Theme.of(context).textTheme.headlineMedium),
-                            for (var pair in itemsAndCosts) 
-                              Padding(
-                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.01), // Dynamic bottom padding based on screen height
-                                child: Text(pair.item),
-                              ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text("Cost", style: Theme.of(context).textTheme.headlineMedium),
-                            for (var pair in itemsAndCosts) 
-                              Padding(
-                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.01), // Dynamic bottom padding based on screen height
-                                child: Text("\$${pair.cost.toStringAsFixed(2)}"),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end, // Aligns widgets at the bottom, useful if they have different heights
                   children: [
-                    SizedBox(width: 10,),
                     IconButton(
-                            icon: Icon(Icons.add_circle_outline),
-                            onPressed: () {
-                              addNewItemAndCost();
-                            },
+                      icon: Icon(Icons.add_circle_outline),
+                      onPressed: () {
+                        addNewItemAndCost();
+                      },
                     ),
-                    // TODO: [UI] Update container to Flexible / Expanded widget to match other items.
-                    Flexible(
-                      flex: 2, // Adjust the flex factor as needed for your design
-                      child: Container(
-                        height: Theme.of(context).textTheme.headlineSmall!.fontSize,
-                        child: TextField(
-                          controller: itemController,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                          decoration: InputDecoration(hintText: 'New Item'),
-                        ),
+                    SizedBox(width: 10), // Provides spacing between the button and the text fields
+                    Expanded(
+                      flex: 2, 
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
+                            child: Text("New Item", style: Theme.of(context).textTheme.headlineSmall),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: 10), 
+                            constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Enter Item',
+                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                border: OutlineInputBorder(), 
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(width: 50), // Consider using a smaller width or a Flexible spacer for responsiveness
-                    Flexible(
-                      flex: 2, // Adjust the flex factor as needed for your design
-                      child: Container(
-                        height: Theme.of(context).textTheme.headlineSmall!.fontSize,
-                        child: TextField(
-                          controller: costController,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                          decoration: InputDecoration(hintText: 'Cost'),
-                        ),
+                    Expanded(
+                      flex: 2, 
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
+                            child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: 10), // Added to prevent the box from touching the screen's side
+                            constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Enter Cost',
+                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                border: OutlineInputBorder(), // Adds a border around the TextField
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 40),
-                // TODO: [UI] Adjust Tax/Tip title and textbox alignment.
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start, // Align row items to the start
-                      children: [
-                        SizedBox(width: 25), // Space before the label
-                        Text(
-                          "Tax:",
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        Expanded(
-                          child: SizedBox(width: 25), // Optional, for additional space between label and field if needed
-                        ),
-                        Container(
-                          width: 120, // Fixed width for the TextField container
-                          child: TextField(
-                            textAlign: TextAlign.center, // Center text within the TextField
-                            decoration: InputDecoration(
-                              hintText: 'Tax',
-                              isDense: true, // Makes the TextField more compact
-                              contentPadding: EdgeInsets.all(8), // Adjust padding inside the TextField
+                SizedBox(height: 30),
+                Divider(
+                  color: Colors.grey, 
+                  thickness: 1, 
+                  indent: 20, 
+                  endIndent: 20, 
+                ),
+                SizedBox(height: 30),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10), // Keep padding for overall alignment
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text("Tax:", style: Theme.of(context).textTheme.headlineSmall),
+                          SizedBox(width: 10), // Space between label and field
+                          Flexible(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Tax',
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                ),
+                                style: Theme.of(context).textTheme.headlineSmall,
+                              ),
                             ),
-                            style: Theme.of(context).textTheme.headlineSmall,
                           ),
-                        ),
-                        Expanded(child: Container()), // Ensures the TextField stays centered in the overall row
-                      ],
-                    ),
-                    SizedBox(height: 15), // Space between the Tax and Tip rows
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start, // Align row items to the start
-                      children: [
-                        SizedBox(width: 25), // Space before the label
-                        Text(
-                          "Tip:",
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        Expanded(
-                          child: SizedBox(width: 25), // Optional, for additional space between label and field if needed
-                        ),
-                        Container(
-                          width: 120, // Fixed width for the TextField container
-                          child: TextField(
-                            textAlign: TextAlign.center, // Center text within the TextField
-                            decoration: InputDecoration(
-                              hintText: 'Tip',
-                              isDense: true,
-                              contentPadding: EdgeInsets.all(8),
+                        ],
+                      ),
+                      SizedBox(height: 15), // Space between Tax and Tip rows
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text("Tip:", style: Theme.of(context).textTheme.headlineSmall),
+                          SizedBox(width: 10), // Space between label and field
+                          Flexible(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Tip',
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                ),
+                                style: Theme.of(context).textTheme.headlineSmall,
+                              ),
                             ),
-                            style: Theme.of(context).textTheme.headlineSmall,
                           ),
-                        ),
-                        Expanded(child: Container()), // Ensures the TextField stays centered in the overall row
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                
                 // TODO: [UI] Make Next/Camera buttons appear fixed at the bottom of
                 // the screen. This means we can still see them when we scroll.
                 SizedBox(height: 250),
