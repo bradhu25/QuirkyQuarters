@@ -1,3 +1,5 @@
+import 'dart:math';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/edit_expense.dart';
 import 'package:quirky_quarters/screens/split_summary.dart';
@@ -6,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ReceiptSummaryRoute extends StatefulWidget {
   const ReceiptSummaryRoute({super.key});
-
   @override
   State<ReceiptSummaryRoute> createState() => _ReceiptSummaryRouteState();
 }
@@ -67,6 +68,38 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
     payerController.clear();
   }
 
+
+  String generateCode() {
+    var rng = Random();
+    var code = List.generate(6, (_) => rng.nextInt(9)).join();
+    return code;
+  }
+
+  void showCodeDialog(BuildContext context, String code) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Your Code"),
+          content: Text(code),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Copy"),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: code));
+                Navigator.of(context).pop(); 
+              },
+            ),
+            TextButton(
+              child: Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop(); 
+              },
+            ),
+          ],
+        );
+      }
+      
   addPayersToDatabase() {
     // TODO: [DEV] Instead of overwritting entire receipt, change only necessary fields.
     FirebaseFirestore.instance
@@ -104,77 +137,94 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // TODO: [UI] Consider wrapping the text + edit widget to 
-                  // prevent overflow (see Expanded/Flexible), and also center
-                  // the "Expense Title" rather than entire row w/ Edit Icon
-
-                  //TODO: [DEV] Load expense title in from Firebase
-                  Text("Expense Title",
-                    style: Theme.of(context).textTheme.headlineLarge,),
-                  IconButton(icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
-                      );
-                    },
-                  )
-                ]
-              ),
-              SizedBox(height: 15),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Text("     ",
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                      for (var i = 0; i < receipt.entries.length; i++)
-                        IconButton(
-                              icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                              // TODO: [DEV] implement divide entry functionality 
-                              onPressed: () {},
-                        ),
-                    ]
-                  ),
-                  Expanded(
-                    child: Column(
+                  Expanded( 
+                    child: Stack(
+                      alignment: Alignment.center, 
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: Text("Item",
-                                style: Theme.of(context).textTheme.headlineMedium,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text("Cost",
-                                style: Theme.of(context).textTheme.headlineMedium,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text("Name",
-                                style: Theme.of(context).textTheme.headlineMedium,
-                              ),
-                            ),
-                          ]
+                        Text(
+                          "Expense Title",
+                          style: Theme.of(context).textTheme.headlineLarge,
+                          textAlign: TextAlign.center,
                         ),
-                        for (var i = 0; i < receipt.entries.length; i++)
-                          // TODO: [UI] Make the highlight prettier (theme color, non-rectangular, whatever else)
-                          GestureDetector(
-                            onTap: () => selectItem(i),
-                            child: Container(
-                              color: selectedItems.contains(i) ? Color.fromARGB(255, 83, 242, 178) : Colors.transparent,
+                        Positioned(
+                          right: 0, 
+                          child: IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+                  //TODO: [DEV] Load expense title in from Firebase
+              Column(
+                children: [
+                  // Header Row with Titles
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 48), // Space allocated for the divide symbol button
+                        Expanded(
+                          flex: 3,
+                          child: Text("Item", style: Theme.of(context).textTheme.headlineMedium),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text("Cost", style: Theme.of(context).textTheme.headlineMedium),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text("Name", style: Theme.of(context).textTheme.headlineMedium),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Dynamic List of Items
+                  for (var i = 0; i < itemsCostsNames.length; i++)
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        onPressed: () {
+                          // TODO: [DEV] Implement add entry functionality
+                        },
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (selectedItems.contains(i)) {
+                                selectedItems.remove(i);
+                              } else {
+                                selectedItems.add(i);
+                              }
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: selectedItems.contains(i) ? Colors.lightBlueAccent.withOpacity(0.5) : Colors.transparent, // Highlight if selected
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 4.0),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Expanded(
                                     flex: 3,
-                                    child: Text(receipt.entries[i].item),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 12), 
+                                      child: Text(itemsCostsNames[i].item),
+                                    ),
                                   ),
                                   Expanded(
                                     flex: 2,
@@ -184,68 +234,57 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                                     flex: 2,
                                     child: Text(receipt.entries[i].payer ?? ""),
                                   ),
-                                ]
-                                ),
+                                ],
+                              ),
                             ),
                           ),
-                      ],
-                    ),
-                  ),
-                ]
-              ),
-              // TODO: [UI] Make Next/Camera buttons appear fixed at the bottom of
-              // the screen. This means we can still see them when we scroll.
-              SizedBox(height: 250),
-              // TODO: [UI] Add some padding around the buttons so that 
-              // they don't go all the way from end to end of screen 
-              Row(
-                children: [
-                  Expanded(
-                    child: 
-                      tagging 
-                      ? TextField(
-                            controller: payerController,
-                            style: Theme.of(context).textTheme.headlineSmall,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              hintText: 'Enter Name...',
-                              border: InputBorder.none,
-                            ),
-                            onSubmitted: (name) {
-                              tagPayer(name);       
-                            },
-                        )
-                      : ElevatedButton(
-                          onPressed: () {
-                            setState((){ tagging = true; });
-                          }, 
-                          child: Text("Tag Payer")
                         ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      // TODO: [DEV] Implement Share Code functionality.
-                      onPressed: () {}, 
-                      child: Text("Share Code")
-                      ),
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      // TODO: [DEV] Implement Next functionality.
-                      onPressed: () {
-                        goToSplitSummary();
-                      }, 
-                      child: Text("Next")
-                    ),
-                  ),
-                ]
-              )
+              ),  
             ]
           )
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  String code = generateCode();
+                  showCodeDialog(context, code);
+                },
+                child: Text("Share Code"),
+              ),
+              if (tagging)
+                ElevatedButton(
+                  onPressed: () {
+                  },
+                  child: Text("Confirm Tag"),
+                )
+              else
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      tagging = true;
+                    });
+                  },
+                  // TODO: [DEV] Implement Tag Payer functionality
+                  child: Text("Tag Payer"),
+                ),
+              ElevatedButton(
+                onPressed: () {
+                  goToSplitSummary();
+                },
+                child: Text("Next"),
+              ),
+            ],
+          ),
         ),
       ),
     );
