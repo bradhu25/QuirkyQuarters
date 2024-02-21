@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/receipt_summary.dart';
+import 'package:quirky_quarters/screens/photo.dart';
+
 
 class ItemAndCost<T1, T2> {
   String item;
@@ -211,6 +213,10 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                     icon: Icon(Icons.camera_alt_outlined),
                     onPressed: () {
                       // TODO: [DEV] Implement camera icon functionality
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CameraPage()),
+                      );
                     },
                   ),
                 ],
