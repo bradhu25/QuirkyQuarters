@@ -70,31 +70,33 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
           child: Column(
             children: [
               Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // Center row contents
-                  children: [
-                    Expanded( // Use Expanded instead of Flexible if you want the text to take all available space
-                      child: Text(
-                        "Expense Title",
-                        style: Theme.of(context).textTheme.headlineLarge,
-                        textAlign: TextAlign.center,
-                      ),
+                children: [
+                  Expanded( 
+                    child: Stack(
+                      alignment: Alignment.center, 
+                      children: [
+                        Text(
+                          "Expense Title",
+                          style: Theme.of(context).textTheme.headlineLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                        Positioned(
+                          right: 0, 
+                          child: IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                  // TODO: [UI] Consider wrapping the text + edit widget to 
-                  // prevent overflow (see Expanded/Flexible), and also center
-                  // the "Expense Title" rather than entire row w/ Edit Icon [Victoria]
-                  //hello
-                  // hi!
+                  ),
+                ],
+              ),
                   //TODO: [DEV] Load expense title in from Firebase
               Column(
                 children: [
@@ -126,7 +128,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                       IconButton(
                         icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                         onPressed: () {
-                          // Implement divide entry functionality
+                          // TODO: [DEV] Implement add entry functionality
                         },
                       ),
                       Expanded(
@@ -152,7 +154,10 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                                 children: [
                                   Expanded(
                                     flex: 3,
-                                    child: Text(itemsCostsNames[i].item),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 12), 
+                                      child: Text(itemsCostsNames[i].item),
+                                    ),
                                   ),
                                   Expanded(
                                     flex: 2,
@@ -172,70 +177,50 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                   ),
                 ],
               ),  
-
-              // TODO: [UI] Make Next/Camera buttons appear fixed at the bottom of
-              // the screen. This means we can still see them when we scroll. [Iris]
-              SizedBox(height: 250),
-              // TODO: [UI] Add some padding around the buttons so that 
-              // they don't go all the way from end to end of screen 
-              Row(
-                children: [
-                  Expanded(
-                    child: tagging
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding around the TextField
-                            child: TextField(
-                              controller: payerController,
-                              style: Theme.of(context).textTheme.headlineSmall,
-                              textAlign: TextAlign.center,
-                              decoration: InputDecoration(
-                                hintText: 'Enter Name...',
-                                border: InputBorder.none,
-                              ),
-                              onSubmitted: (name) {
-                                tagPayer(name);
-                              },
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding around the Button
-                            child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  tagging = true;
-                                });
-                              },
-                              child: Text("Tag Payer"),
-                            ),
-                          ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      // TODO: [DEV] Implement Share Code functionality.
-                      onPressed: () {}, 
-                      child: Text("Share Code")
-                      ),
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      // TODO: [DEV] Implement Next functionality.
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SplitSummaryRoute()),
-                        );
-                      }, 
-                      child: Text("Next")
-                    ),
-                  ),
-                ]
-              )
             ]
           )
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: [DEV] Develop Share Code functionality
+                },
+                child: Text("Share Code"),
+              ),
+              if (tagging)
+                ElevatedButton(
+                  onPressed: () {
+                  },
+                  child: Text("Confirm Tag"),
+                )
+              else
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      tagging = true;
+                    });
+                  },
+                  // TODO: [DEV] Implement Tag Payer functionality
+                  child: Text("Tag Payer"),
+                ),
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: [DEV] Implement Next functionality
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SplitSummaryRoute()),
+                  );
+                },
+                child: Text("Next"),
+              ),
+            ],
+          ),
         ),
       ),
     );
