@@ -72,45 +72,47 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                 Row(
                     children: [
                       SizedBox(width: 10,),
-                      Container()
-                      Column(
-                        children: [
-                          // TODO: [UI] Add minimum width of column for when we don't 
-                          // have any items yet. [Victoria]
-                          Text("      ",
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          for (var i = 0; i < itemsAndCosts.length; i++)
-                            IconButton(
-                              icon: Icon(Icons.remove_circle_outline),
-                              onPressed: () {
-                                removeItemAndCost(i);
-                              },
+                      Container(
+                        width: max(MediaQuery.of(context).size.width * 0.1, 100),
+                        child: Column(
+                          children: [
+                            // TODO: [UI] Add minimum width of column for when we don't 
+                            // have any items yet. [Victoria]
+                            Text("      ",
+                              style: Theme.of(context).textTheme.headlineMedium,
                             ),
-                        ]
-                      ),
+                            for (var i = 0; i < itemsAndCosts.length; i++)
+                              IconButton(
+                                icon: Icon(Icons.remove_circle_outline),
+                                onPressed: () {
+                                  removeItemAndCost(i);
+                                },
+                              ),
+                          ]
+                        ),
+                      )
+      
                       // TODO: [UI] Make spacing between columns (buttons, items, costs) 
-                      // dynamic to screen size. See Flexible / Expanded widget.
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Item",
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          for (var pair in itemsAndCosts) 
-                            Text(pair.item),
-                        ]
+                      // dynamic to screen size. See Flexible / Expanded widget. [Victoria]
+                      Expanded(
+                        flex: 1, 
+                        child: Column(
+                          children: [
+                            Text("Item", style: Theme.of(context).textTheme.headlineMedium),
+                            for (var pair in itemsAndCosts) 
+                              Text(pair.item),
+                          ],
+                        ),
                       ),
-                      SizedBox(width: 104,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Cost",
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          for (var pair in itemsAndCosts) 
-                            Text("\$${pair.cost.toStringAsFixed(2)}"),
-                        ]
+                      Expanded(
+                        flex: 1, 
+                        child: Column(
+                          children: [
+                            Text("Cost", style: Theme.of(context).textTheme.headlineMedium),
+                            for (var pair in itemsAndCosts) 
+                              Text("\$${pair.cost.toStringAsFixed(2)}"),
+                          ],
+                        ),
                       ),
                     ]
                   ),
