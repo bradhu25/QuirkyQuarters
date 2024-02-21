@@ -1,3 +1,5 @@
+import 'dart:math';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/edit_expense.dart';
 import 'package:quirky_quarters/screens/split_summary.dart';
@@ -13,7 +15,6 @@ class ItemCostName<T1, T2> {
 
 class ReceiptSummaryRoute extends StatefulWidget {
   const ReceiptSummaryRoute({super.key});
-
   @override
   State<ReceiptSummaryRoute> createState() => _ReceiptSummaryRouteState();
 }
@@ -52,6 +53,39 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
       selectedItems.clear(); 
     });
     payerController.clear();
+  }
+
+  String generateCode() {
+    var rng = Random();
+    var code = List.generate(6, (_) => rng.nextInt(9)).join();
+    return code;
+  }
+
+  void showCodeDialog(BuildContext context, String code) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Your Code"),
+          content: Text(code),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Copy"),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: code));
+                Navigator.of(context).pop(); 
+              },
+            ),
+            TextButton(
+              child: Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop(); 
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -189,7 +223,8 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // TODO: [DEV] Develop Share Code functionality
+                  String code = generateCode();
+                  showCodeDialog(context, code);
                 },
                 child: Text("Share Code"),
               ),
