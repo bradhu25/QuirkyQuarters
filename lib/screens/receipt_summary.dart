@@ -4,8 +4,6 @@ import 'package:quirky_quarters/screens/split_summary.dart';
 import 'package:quirky_quarters/item_cost_payer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-
 class ReceiptSummaryRoute extends StatefulWidget {
   const ReceiptSummaryRoute({super.key});
 
@@ -14,14 +12,7 @@ class ReceiptSummaryRoute extends StatefulWidget {
 }
 
 class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
-  
-  // TODO: [DEV] Load items and costs from Firebase.
-  // var ItemsCostsPayers = [
-  //   ItemCostPayer(item:"Lamb Chops", cost:30.00, payer:""), 
-  //   ItemCostPayer(item:"Steak", cost:50.00, payer:""), 
-  //   ItemCostPayer(item:"Boba", cost:2.00, payer:""),
-  //   ItemCostPayer(item:"Coke", cost:1.50, payer:"")
-  // ];
+
   Receipt receipt = Receipt(entries: []);
 
   @override
