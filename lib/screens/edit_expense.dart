@@ -213,10 +213,10 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                     icon: Icon(Icons.camera_alt_outlined),
                     onPressed: () {
                       // TODO: [DEV] Implement camera icon functionality
-                      Navigator.push(
+                      /*Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const CameraPage()),
-                      );
+                      );*/
                     },
                   ),
                 ],
