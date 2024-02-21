@@ -92,6 +92,14 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end, // Aligns widgets at the bottom, useful if they have different heights
                   children: [
+                    // TODO: [URGENT] Add for loops for remove item icons
+                    // for (var i = 0; i < itemsAndCosts.length; i++)
+                    //         IconButton(
+                    //           icon: Icon(Icons.remove_circle_outline),
+                    //           onPressed: () {
+                    //             removeItemAndCost(i);
+                    //           },
+                    //         ),
                     IconButton(
                       icon: Icon(Icons.add_circle_outline),
                       onPressed: () {
@@ -106,8 +114,10 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
-                            child: Text("New Item", style: Theme.of(context).textTheme.headlineSmall),
+                            child: Text("Item", style: Theme.of(context).textTheme.headlineSmall),
                           ),
+                          for (var pair in itemsAndCosts) 
+                            Text(pair.item),
                           Container(
                             margin: EdgeInsets.only(right: 10), 
                             constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
@@ -117,6 +127,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                 border: OutlineInputBorder(), 
                               ),
+                              controller: itemController,
                             ),
                           ),
                         ],
@@ -131,6 +142,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                             padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
                             child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
                           ),
+                          for (var pair in itemsAndCosts) 
+                            Text("\$${pair.cost.toStringAsFixed(2)}"),
                           Container(
                             margin: EdgeInsets.only(right: 10), // Added to prevent the box from touching the screen's side
                             constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
@@ -140,6 +153,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                 border: OutlineInputBorder(), // Adds a border around the TextField
                               ),
+                              controller: costController,
                             ),
                           ),
                         ],
@@ -219,11 +233,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // TODO: [DEV] Implement Next button functionality and ensure it does not proceed without fields
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ReceiptSummaryRoute()),
-                      );
+                      goToReceiptSummary();
                     },
                     child: const Text('Next'),
                   ),

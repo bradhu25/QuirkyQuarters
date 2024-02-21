@@ -20,7 +20,6 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
   void initState() {
     super.initState();
     fetchReceiptData();
-    print("Fetched Data");
   }
 
   void fetchReceiptData() async {
@@ -99,6 +98,9 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
           ],
         );
       }
+    );
+  }
+
       
   addPayersToDatabase() {
     // TODO: [DEV] Instead of overwritting entire receipt, change only necessary fields.
@@ -164,7 +166,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                   ),
                 ],
               ),
-                  //TODO: [DEV] Load expense title in from Firebase
+              // TODO: [DEV] Load expense title in from Firebase
               Column(
                 children: [
                   // Header Row with Titles
@@ -189,26 +191,18 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                     ),
                   ),
                   // Dynamic List of Items
-                  for (var i = 0; i < itemsCostsNames.length; i++)
+                  for (var i = 0; i < receipt.entries.length; i++)
                   Row(
                     children: [
                       IconButton(
                         icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                         onPressed: () {
-                          // TODO: [DEV] Implement add entry functionality
+                          // TODO: [DEV] Implement divide entry functionality.
                         },
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (selectedItems.contains(i)) {
-                                selectedItems.remove(i);
-                              } else {
-                                selectedItems.add(i);
-                              }
-                            });
-                          },
+                          onTap: () { selectItem(i); },
                           child: Container(
                             decoration: BoxDecoration(
                               color: selectedItems.contains(i) ? Colors.lightBlueAccent.withOpacity(0.5) : Colors.transparent, // Highlight if selected
@@ -223,7 +217,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                                     flex: 3,
                                     child: Padding(
                                       padding: EdgeInsets.only(left: 12), 
-                                      child: Text(itemsCostsNames[i].item),
+                                      child: Text(receipt.entries[i].item),
                                     ),
                                   ),
                                   Expanded(
@@ -261,22 +255,30 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                 },
                 child: Text("Share Code"),
               ),
-              if (tagging)
-                ElevatedButton(
-                  onPressed: () {
-                  },
-                  child: Text("Confirm Tag"),
-                )
-              else
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      tagging = true;
-                    });
-                  },
-                  // TODO: [DEV] Implement Tag Payer functionality
-                  child: Text("Tag Payer"),
-                ),
+              // TODO: [URGENT] This is a ternary expression that determines whether an
+              // ElevatedButton should appear to give you the option to tag a payer 
+              //("Tag Payer") OR a TextField should appear to fill out the payer's name.
+              // Please keep this logic and encompass the expression in whatever is necessary 
+              // to format and get it to compile.
+              // tagging 
+              // ? TextField(
+              //     controller: payerController,
+              //     style: Theme.of(context).textTheme.headlineSmall,
+              //     textAlign: TextAlign.center,
+              //     decoration: InputDecoration(
+              //       hintText: 'Enter Name...',
+              //       border: InputBorder.none,
+              //     ),
+              //     onSubmitted: (name) {
+              //       tagPayer(name);       
+              //     },
+              //   )
+              // : ElevatedButton(
+              //     onPressed: () {
+              //       setState((){ tagging = true; });
+              //     }, 
+              //     child: Text("Tag Payer")
+              //   ),
               ElevatedButton(
                 onPressed: () {
                   goToSplitSummary();
