@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/receipt_summary.dart';
-import 'package:quirky_quarters/screens/photo.dart';
-
-
-class ItemAndCost<T1, T2> {
-  String item;
-  double cost;
-
-  ItemAndCost(this.item, this.cost);
-}
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quirky_quarters/item_cost_payer.dart';
 
 class EditExpenseRoute extends StatefulWidget {
   const EditExpenseRoute({super.key});
@@ -18,18 +11,43 @@ class EditExpenseRoute extends StatefulWidget {
 }
 
 class _EditExpenseRouteState extends State<EditExpenseRoute> {
-  var itemsAndCosts = [];
+  var itemsAndCosts = <ItemCostPayer>[];
 
   final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
   final TextEditingController itemController = TextEditingController();
   final TextEditingController costController = TextEditingController();
+
+  addExpensesToDatabase() {
+    // TODO: [DEV] Consider update vs add case.
+    final receipt = Receipt(entries: itemsAndCosts);
+    FirebaseFirestore.instance
+        .collection('receipt_book')
+        .doc("xMvRGYWtwhYYCEQscFZo")
+        .withConverter(
+          fromFirestore: Receipt.fromFirestore,
+          toFirestore: (Receipt obj, options) => obj.toFirestore(),
+        )
+        .set(receipt)
+        .onError((e, _) => print("Error writing document: $e"));
+  }
+
+  goToReceiptSummary() {
+    if (itemsAndCosts.isEmpty) {
+      return;
+    }
+    addExpensesToDatabase();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ReceiptSummaryRoute()),
+    );
+  }
 
   addNewItemAndCost() {
     var item = itemController.text;
     var cost = double.tryParse(costController.text);
     if (item.isNotEmpty && cost != null) {
       setState(() {
-        itemsAndCosts.add(ItemAndCost(item, cost));
+        itemsAndCosts.add(ItemCostPayer(item: item, cost: cost, payer: null));
         itemController.clear();
         costController.clear();
       });
