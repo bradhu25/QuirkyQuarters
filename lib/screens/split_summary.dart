@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
-
-// TODO: [DEV] Move ItemCostName to file for shared classes.
-class ItemCostName {
-  String item;
-  double cost;
-  String name;
-
-  ItemCostName(this.item, this.cost, this.name);
-}
+import 'package:quirky_quarters/item_cost_payer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SplitSummaryRoute extends StatefulWidget {
   const SplitSummaryRoute({super.key});
@@ -18,30 +11,50 @@ class SplitSummaryRoute extends StatefulWidget {
 
 class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
   // TODO: [DEV] Fetch using Firebase.
-  List<ItemCostName> itemsCostsNames = [
-    ItemCostName("Lamb Chops", 30.00, "Bradley"),
-    ItemCostName("Steak", 50.00, "Gaby"),
-    ItemCostName("Boba", 2.00, "Iris"),
-    ItemCostName("Coke", 1.50, "Victoria"),
-  ];
+
+  Receipt receipt = Receipt(entries: []);
 
   // Mapping for person name and items associated with that person
-  Map<String, List<ItemCostName>> itemsByPayer = {};
+  Map<String, List<ItemCostPayer>> itemsByPayer = {};
 
   @override
   void initState() {
     super.initState();
-    // Organize items by payer's name
-    // TODO: [DEV] Consider case where item has not been tagged. We could still
-    // have those items in a drop down with the `name' as "Untagged Items".
-    for (var item in itemsCostsNames) {
-      final name = item.name;
-      if (itemsByPayer.containsKey(name)) {
-        itemsByPayer[name]!.add(item);
-      } else {
-        itemsByPayer[name] = [item];
+    // TODO: [DEV] Factor out into utils file.
+    fetchReceiptData();
+    // organizeItemsByPayer();
+  }
+
+  void organizeItemsByPayer() {
+    setState(() {
+      for (var entry in receipt.entries) {
+        final name = entry.payer ?? "Untagged Items";
+        if (itemsByPayer.containsKey(name)) {
+          itemsByPayer[name]!.add(entry);
+        } else {
+          itemsByPayer[name] = [entry];
+        }
       }
+    });
+  }
+
+  void fetchReceiptData() async {
+    // Read from Firebase
+    final db = FirebaseFirestore.instance
+    .collection("receipt_book")
+    .doc("xMvRGYWtwhYYCEQscFZo")
+    .withConverter(
+      fromFirestore: Receipt.fromFirestore,
+      toFirestore: (Receipt obj, _) => obj.toFirestore(),
+    );
+
+    final docSnap = await db.get();
+    if (docSnap.data != null) {
+      setState(() {
+        receipt = docSnap.data()!; // Convert to Receipt object
+      }); 
     }
+    organizeItemsByPayer();
   }
 
   @override
@@ -53,10 +66,10 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
         child: ExpansionTile(
           title: Text(entry.key),
           subtitle: Text('Total: \$${total.toStringAsFixed(2)}'),
-          children: entry.value.map((itemCostName) {
+          children: entry.value.map((entry) {
             return ListTile(
-              title: Text(itemCostName.item),
-              trailing: Text('\$${itemCostName.cost.toStringAsFixed(2)}'),
+              title: Text(entry.item),
+              trailing: Text('\$${entry.cost.toStringAsFixed(2)}'),
             );
           }).toList(),
         ),

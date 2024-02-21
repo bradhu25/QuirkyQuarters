@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/edit_expense.dart';
 import 'package:quirky_quarters/screens/split_summary.dart';
-
-// TODO: [DEV] Add ItemCostName to file with reusable classes.
-class ItemCostName<T1, T2> {
-  String item;
-  double cost;
-  String name;
-
-  ItemCostName(this.item, this.cost, this.name);
-}
+import 'package:quirky_quarters/item_cost_payer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ReceiptSummaryRoute extends StatefulWidget {
   const ReceiptSummaryRoute({super.key});
@@ -19,14 +12,34 @@ class ReceiptSummaryRoute extends StatefulWidget {
 }
 
 class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
-  
-  // TODO: [DEV] Load items and costs from Firebase.
-  var itemsCostsNames = [
-    ItemCostName("Lamb Chops", 30.00, ""), 
-    ItemCostName("Steak", 50.00, ""), 
-    ItemCostName("Boba", 2.00, ""),
-    ItemCostName("Coke", 1.50, "")
-  ];
+
+  Receipt receipt = Receipt(entries: []);
+
+  @override
+  void initState() {
+    super.initState();
+    fetchReceiptData();
+    print("Fetched Data");
+  }
+
+  void fetchReceiptData() async {
+    // Read from Firebase
+    // Populate itemsCostsPayers with receipt list
+    final db = FirebaseFirestore.instance
+    .collection("receipt_book")
+    .doc("xMvRGYWtwhYYCEQscFZo")
+    .withConverter(
+      fromFirestore: Receipt.fromFirestore,
+      toFirestore: (Receipt obj, _) => obj.toFirestore(),
+    );
+
+    final docSnap = await db.get();
+    if (docSnap.data != null) {
+      setState(() {
+        receipt = docSnap.data()!; // Convert to Receipt object
+      }); 
+    }
+  }
 
   Set<int> selectedItems = {};
   var tagging = false;
@@ -47,11 +60,32 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
     setState((){ 
       tagging = false; 
       for (var idx in selectedItems) {
-        itemsCostsNames[idx].name = name;
+        receipt.entries[idx].payer = name;
       }
       selectedItems.clear(); 
     });
     payerController.clear();
+  }
+
+  addPayersToDatabase() {
+    // TODO: [DEV] Instead of overwritting entire receipt, change only necessary fields.
+    FirebaseFirestore.instance
+        .collection('receipt_book')
+        .doc("xMvRGYWtwhYYCEQscFZo")
+        .withConverter(
+          fromFirestore: Receipt.fromFirestore,
+          toFirestore: (Receipt obj, options) => obj.toFirestore(),
+        )
+        .set(receipt)
+        .onError((e, _) => print("Error writing document: $e"));
+  }
+
+  goToSplitSummary() {
+    addPayersToDatabase();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SplitSummaryRoute()),
+    );
   }
 
   @override
@@ -97,7 +131,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                       Text("     ",
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
-                      for (var i = 0; i < itemsCostsNames.length; i++)
+                      for (var i = 0; i < receipt.entries.length; i++)
                         IconButton(
                               icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                               // TODO: [DEV] implement divide entry functionality 
@@ -130,7 +164,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                             ),
                           ]
                         ),
-                        for (var i = 0; i < itemsCostsNames.length; i++)
+                        for (var i = 0; i < receipt.entries.length; i++)
                           // TODO: [UI] Make the highlight prettier (theme color, non-rectangular, whatever else)
                           GestureDetector(
                             onTap: () => selectItem(i),
@@ -140,15 +174,15 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                                 children: [
                                   Expanded(
                                     flex: 3,
-                                    child: Text(itemsCostsNames[i].item),
+                                    child: Text(receipt.entries[i].item),
                                   ),
                                   Expanded(
                                     flex: 2,
-                                    child: Text("\$${itemsCostsNames[i].cost.toStringAsFixed(2)}"),
+                                    child: Text("\$${receipt.entries[i].cost.toStringAsFixed(2)}"),
                                   ),
                                   Expanded(
                                     flex: 2,
-                                    child: Text(itemsCostsNames[i].name),
+                                    child: Text(receipt.entries[i].payer ?? ""),
                                   ),
                                 ]
                                 ),
@@ -203,10 +237,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                     child: ElevatedButton(
                       // TODO: [DEV] Implement Next functionality.
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SplitSummaryRoute()),
-                        );
+                        goToSplitSummary();
                       }, 
                       child: Text("Next")
                     ),
