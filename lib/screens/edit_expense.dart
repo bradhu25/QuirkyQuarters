@@ -14,8 +14,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   Receipt receipt = Receipt.emptyReceipt();
 
   final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
-  final TextEditingController itemController = TextEditingController();
-  final TextEditingController costController = TextEditingController();
+  List<TextEditingController> itemControllers = [TextEditingController()];
+  List<TextEditingController> costControllers = [TextEditingController()];
   final TextEditingController taxController = TextEditingController();
   final TextEditingController tipController = TextEditingController();
 
@@ -25,8 +25,6 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     receipt.tax = tax;
     receipt.tip = tip;
     receipt.title = expenseTitleController.text;
-
-    print(receipt.toString());
 
     // TODO: [DEV] Consider update vs add case.
     FirebaseFirestore.instance
@@ -51,15 +49,40 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     );
   }
 
+  editItem(int i) {
+    var item = itemControllers[i].text;
+    if (item.isNotEmpty) {
+      setState(() {
+        receipt.entries[i].item = item;
+      });
+    }
+  }
+  
+  editCost(int i) {
+    var cost = double.tryParse(costControllers[i].text);
+    if (cost != null) {
+      setState(() {
+        cost = (100 * cost!).truncateToDouble() / 100;
+        costControllers[i].text = cost!.toStringAsFixed(2);
+        
+        receipt.total = receipt.total - receipt.entries[i].cost + cost!;
+        receipt.entries[i].cost = cost!;
+      });
+    }
+  }
+
+
   addNewItemAndCost() {
-    var item = itemController.text;
-    var cost = double.tryParse(costController.text);
+    var item = itemControllers.last.text;
+    var cost = double.tryParse(costControllers.last.text);
     if (item.isNotEmpty && cost != null) {
       setState(() {
-        receipt.entries.add(ItemCostPayer(item: item, cost: cost, payer: null));
-        receipt.total += cost;
-        itemController.clear();
-        costController.clear();
+        cost = (100 * cost!).truncateToDouble() / 100;
+        costControllers.last.text = cost!.toStringAsFixed(2);
+        receipt.entries.add(ItemCostPayer(item: item, cost: cost!, payer: null));
+        receipt.total += cost!;
+        itemControllers.add(TextEditingController());
+        costControllers.add(TextEditingController());
       });
     }
   }
@@ -111,12 +134,6 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                     //             removeItemAndCost(i);
                     //           },
                     //         ),
-                    IconButton(
-                      icon: Icon(Icons.add_circle_outline),
-                      onPressed: () {
-                        addNewItemAndCost();
-                      },
-                    ),
                     SizedBox(width: 10), // Provides spacing between the button and the text fields
                     Expanded(
                       flex: 2, 
@@ -127,8 +144,16 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                             padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
                             child: Text("Item", style: Theme.of(context).textTheme.headlineSmall),
                           ),
-                          for (var entry in receipt.entries) 
-                            Text(entry.item),
+                          for (var i = 0; i < receipt.entries.length; i++) 
+                            TextField(
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                border: OutlineInputBorder(), 
+                              ),
+                              controller: itemControllers[i],
+                              onTapOutside: (_) { editItem(i); },
+                              onSubmitted: (_) { editItem(i); },
+                            ),
                           Container(
                             margin: EdgeInsets.only(right: 10), 
                             constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
@@ -138,7 +163,9 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                 border: OutlineInputBorder(), 
                               ),
-                              controller: itemController,
+                              controller: itemControllers.last,
+                              onTapOutside: (_) { addNewItemAndCost(); },
+                              onSubmitted: (_) { addNewItemAndCost(); },
                             ),
                           ),
                         ],
@@ -153,8 +180,16 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                             padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
                             child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
                           ),
-                          for (var entry in receipt.entries) 
-                            Text("\$${entry.cost.toStringAsFixed(2)}"),
+                          for (var i = 0; i < receipt.entries.length; i++) 
+                            TextField(
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                border: OutlineInputBorder(), 
+                              ),
+                              controller: costControllers[i],
+                              onTapOutside: (_) { editCost(i); },
+                              onSubmitted: (_) { editCost(i); },
+                            ),
                           Container(
                             margin: EdgeInsets.only(right: 10), // Added to prevent the box from touching the screen's side
                             constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
@@ -164,7 +199,9 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                 border: OutlineInputBorder(), // Adds a border around the TextField
                               ),
-                              controller: costController,
+                              controller: costControllers.last,
+                              onTapOutside: (_){ addNewItemAndCost(); },
+                              onSubmitted: (_){ addNewItemAndCost(); },
                             ),
                           ),
                         ],
@@ -248,7 +285,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                     onPressed: () {
                       goToReceiptSummary();
                     },
-                    child: const Text('Next'),
+                    child: const Text('Save'),
                   ),
                   IconButton(
                     icon: Icon(Icons.camera_alt_outlined),
