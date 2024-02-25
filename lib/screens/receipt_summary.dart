@@ -45,6 +45,8 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
   var tagging = false;
 
   final TextEditingController payerController = TextEditingController();
+  final TextEditingController divideController = TextEditingController();
+
 
   void selectItem(int itemIndex) {
     setState(() {
@@ -98,10 +100,45 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
           ],
         );
       }
+    ); 
+  }
+
+  void showDivideDialog(BuildContext context, int i) {
+      showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Enter # of people to split with"),
+          content: TextField(
+            controller: divideController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(hintText: "# of people"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop(); 
+              },
+            ),
+            TextButton(
+              child: Text("Done"),
+              onPressed: () {
+                int numberOfPeople = int.tryParse(divideController.text) ?? 1;
+                setState(() {
+                  receipt.entries[i].cost /= numberOfPeople;
+                  receipt.duplicateEntry(i, numberOfPeople);
+                });
+                divideController.clear();
+                Navigator.of(context).pop();
+              }
+            )
+          ],
+        );
+      }
     );
   }
 
-      
   addPayersToDatabase() {
     // TODO: [DEV] Instead of overwritting entire receipt, change only necessary fields.
     FirebaseFirestore.instance
@@ -192,50 +229,51 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                   ),
                   // Dynamic List of Items
                   for (var i = 0; i < receipt.entries.length; i++)
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                        onPressed: () {
-                          // TODO: [DEV] Implement divide entry functionality.
-                        },
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () { selectItem(i); },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: selectedItems.contains(i) ? Colors.lightBlueAccent.withOpacity(0.5) : Colors.transparent, // Highlight if selected
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 4.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 12), 
-                                      child: Text(receipt.entries[i].item),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                          onPressed: () {
+                            // TODO: [DEV] Implement divide entry functionality.
+                            showDivideDialog(context, i);
+                          },
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () { selectItem(i); },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: selectedItems.contains(i) ? Colors.lightBlueAccent.withOpacity(0.5) : Colors.transparent, // Highlight if selected
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 4.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 12), 
+                                        child: Text(receipt.entries[i].item),
+                                      ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text("\$${receipt.entries[i].cost.toStringAsFixed(2)}"),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(receipt.entries[i].payer ?? ""),
-                                  ),
-                                ],
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text("\$${receipt.entries[i].cost.toStringAsFixed(2)}"),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(receipt.entries[i].payer ?? ""),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                 ],
               ),  
             ]
