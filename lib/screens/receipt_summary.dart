@@ -127,7 +127,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                 int numberOfPeople = int.tryParse(divideController.text) ?? 1;
                 setState(() {
                   receipt.entries[i].cost /= numberOfPeople;
-                  receipt.divideEntry(i, numberOfPeople);
+                  receipt.duplicateEntry(i, numberOfPeople);
                 });
                 divideController.clear();
                 Navigator.of(context).pop();

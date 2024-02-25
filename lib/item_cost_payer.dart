@@ -58,7 +58,7 @@ class Receipt<T1> {
     };
   }
 
-  void divideEntry(int index, int numDivide) {
+  void duplicateEntry(int index, int numDivide) {
     if (index < 0 || index >= entries.length || numDivide < 1) return;
     
     ItemCostPayer itemToDivide = entries[index];
