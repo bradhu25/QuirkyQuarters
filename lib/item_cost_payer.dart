@@ -58,6 +58,15 @@ class Receipt<T1> {
     };
   }
 
+  void divideEntry(int index, int numDivide) {
+    if (index < 0 || index >= entries.length || numDivide < 1) return;
+    
+    ItemCostPayer itemToDivide = entries[index];
+    for (int i = 0; i < numDivide - 1; i++) {
+      entries.insert(index, ItemCostPayer.copy(itemToDivide));
+    }
+  }
+
   @override toString() {
     String receiptString = "";
     receiptString += "title: ${title}\n";
@@ -77,6 +86,11 @@ class ItemCostPayer<T1, T2, T3> {
   String? payer;
 
   ItemCostPayer({required this.item, required this.cost, this.payer});
+
+  ItemCostPayer.copy(ItemCostPayer original)
+      : item = original.item,
+        cost = original.cost,
+        payer = original.payer;
 
   factory ItemCostPayer.fromFirestore(
     Map<String, dynamic> entry,
