@@ -12,7 +12,7 @@ class SplitSummaryRoute extends StatefulWidget {
 class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
   // TODO: [DEV] Fetch using Firebase.
 
-  Receipt receipt = Receipt(entries: []);
+  Receipt receipt = Receipt.emptyReceipt();
 
   // Mapping for person name and items associated with that person
   Map<String, List<ItemCostPayer>> itemsByPayer = {};
@@ -60,18 +60,32 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
   @override
   Widget build(BuildContext context) {
     // Create a list of ExpansionTiles for each payer 
-    List<Widget> payerTiles = itemsByPayer.entries.map((entry) {
-      double total = entry.value.fold(0, (prev, item) => prev + item.cost);
+    List<Widget> payerTiles = itemsByPayer.entries.map((payer) {
+      double payer_total = payer.value.fold(0, (prev, item) => prev + item.cost);
       return Card(
         child: ExpansionTile(
-          title: Text(entry.key),
-          subtitle: Text('Total: \$${total.toStringAsFixed(2)}'),
-          children: entry.value.map((entry) {
-            return ListTile(
-              title: Text(entry.item),
-              trailing: Text('\$${entry.cost.toStringAsFixed(2)}'),
-            );
-          }).toList(),
+          title: Text(payer.key),
+          subtitle: Text('Total: \$${payer_total.toStringAsFixed(2)}'),
+          children: 
+            [  
+            ...payer.value.map((entry) {
+                return ListTile(
+                  title: Text(entry.item),
+                  trailing: Text('\$${entry.cost.toStringAsFixed(2)}'),
+                );
+              }).toList(),
+            if (receipt.tax != null)
+              ListTile(
+                  title: Text("Tax:"),
+                  trailing: Text('\$${(payer_total / receipt.total * receipt.tax!).toStringAsFixed(2)}'),
+                ),
+            if (receipt.tip != null)
+              ListTile(
+                  title: Text("Tip:"),
+                  trailing: Text('\$${(payer_total / receipt.total * receipt.tip!).toStringAsFixed(2)}'),
+                ),
+
+            ]
         ),
       );
     }).toList();

@@ -11,15 +11,24 @@ class EditExpenseRoute extends StatefulWidget {
 }
 
 class _EditExpenseRouteState extends State<EditExpenseRoute> {
-  var itemsAndCosts = <ItemCostPayer>[];
+  Receipt receipt = Receipt.emptyReceipt();
 
   final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
   final TextEditingController itemController = TextEditingController();
   final TextEditingController costController = TextEditingController();
+  final TextEditingController taxController = TextEditingController();
+  final TextEditingController tipController = TextEditingController();
 
   addExpensesToDatabase() {
+    var tax = double.tryParse(taxController.text);
+    var tip = double.tryParse(tipController.text);
+    receipt.tax = tax;
+    receipt.tip = tip;
+    receipt.title = expenseTitleController.text;
+
+    print(receipt.toString());
+
     // TODO: [DEV] Consider update vs add case.
-    final receipt = Receipt(entries: itemsAndCosts);
     FirebaseFirestore.instance
         .collection('receipt_book')
         .doc("xMvRGYWtwhYYCEQscFZo")
@@ -32,7 +41,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   }
 
   goToReceiptSummary() {
-    if (itemsAndCosts.isEmpty) {
+    if (receipt.entries.isEmpty) {
       return;
     }
     addExpensesToDatabase();
@@ -47,7 +56,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     var cost = double.tryParse(costController.text);
     if (item.isNotEmpty && cost != null) {
       setState(() {
-        itemsAndCosts.add(ItemCostPayer(item: item, cost: cost, payer: null));
+        receipt.entries.add(ItemCostPayer(item: item, cost: cost, payer: null));
+        receipt.total += cost;
         itemController.clear();
         costController.clear();
       });
@@ -56,7 +66,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
 
   removeItemAndCost(int i) {
     setState(() {
-        itemsAndCosts.removeAt(i);
+        receipt.total -= receipt.entries[i].cost;
+        receipt.entries.removeAt(i);
     });
   }
 
@@ -93,7 +104,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                   crossAxisAlignment: CrossAxisAlignment.end, // Aligns widgets at the bottom, useful if they have different heights
                   children: [
                     // TODO: [URGENT] Add for loops for remove item icons
-                    // for (var i = 0; i < itemsAndCosts.length; i++)
+                    // for (var i = 0; i < receipt.entries.length; i++)
                     //         IconButton(
                     //           icon: Icon(Icons.remove_circle_outline),
                     //           onPressed: () {
@@ -116,8 +127,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                             padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
                             child: Text("Item", style: Theme.of(context).textTheme.headlineSmall),
                           ),
-                          for (var pair in itemsAndCosts) 
-                            Text(pair.item),
+                          for (var entry in receipt.entries) 
+                            Text(entry.item),
                           Container(
                             margin: EdgeInsets.only(right: 10), 
                             constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
@@ -142,8 +153,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                             padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
                             child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
                           ),
-                          for (var pair in itemsAndCosts) 
-                            Text("\$${pair.cost.toStringAsFixed(2)}"),
+                          for (var entry in receipt.entries) 
+                            Text("\$${entry.cost.toStringAsFixed(2)}"),
                           Container(
                             margin: EdgeInsets.only(right: 10), // Added to prevent the box from touching the screen's side
                             constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
@@ -183,6 +194,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                             child: Container(
                               width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                               child: TextField(
+                                controller: taxController,
                                 decoration: InputDecoration(
                                   hintText: 'Tax',
                                   border: OutlineInputBorder(),
@@ -205,6 +217,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                             child: Container(
                               width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                               child: TextField(
+                                controller: tipController,
                                 decoration: InputDecoration(
                                   hintText: 'Tip',
                                   border: OutlineInputBorder(),

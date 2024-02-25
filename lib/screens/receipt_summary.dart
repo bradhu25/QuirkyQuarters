@@ -14,7 +14,7 @@ class ReceiptSummaryRoute extends StatefulWidget {
 
 class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
 
-  Receipt receipt = Receipt(entries: []);
+  Receipt receipt = Receipt.emptyReceipt();
 
   @override
   void initState() {
@@ -145,7 +145,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                       alignment: Alignment.center, 
                       children: [
                         Text(
-                          "Expense Title",
+                          receipt.title,
                           style: Theme.of(context).textTheme.headlineLarge,
                           textAlign: TextAlign.center,
                         ),

@@ -58,6 +58,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '961462713071',
     projectId: 'quirky-quarters',
     storageBucket: 'quirky-quarters.appspot.com',
-    iosBundleId: 'com.example.namerApp',
+    iosBundleId: 'com.example.QuirkyQuarters',
   );
 }
