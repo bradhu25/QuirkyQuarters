@@ -61,11 +61,15 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
   Widget build(BuildContext context) {
     // Create a list of ExpansionTiles for each payer 
     List<Widget> payerTiles = itemsByPayer.entries.map((payer) {
-      double payer_total = payer.value.fold(0, (prev, item) => prev + item.cost);
+      double rawTotal = payer.value.fold(0, (prev, item) => prev + item.cost);
+      double payerTip = receipt.tip != null ? rawTotal / receipt.total * receipt.tip! : 0;
+      double payerTax = receipt.tax != null ? rawTotal / receipt.total * receipt.tax! : 0;
+      double payerTotal = rawTotal + payerTip + payerTax;
+      
       return Card(
         child: ExpansionTile(
           title: Text(payer.key),
-          subtitle: Text('Total: \$${payer_total.toStringAsFixed(2)}'),
+          subtitle: Text('Total: \$${payerTotal.toStringAsFixed(2)}'),
           children: 
             [  
             ...payer.value.map((entry) {
@@ -77,12 +81,12 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
             if (receipt.tax != null)
               ListTile(
                   title: Text("Tax:"),
-                  trailing: Text('\$${(payer_total / receipt.total * receipt.tax!).toStringAsFixed(2)}'),
+                  trailing: Text('\$${payerTax.toStringAsFixed(2)}'),
                 ),
             if (receipt.tip != null)
               ListTile(
                   title: Text("Tip:"),
-                  trailing: Text('\$${(payer_total / receipt.total * receipt.tip!).toStringAsFixed(2)}'),
+                  trailing: Text('\$${payerTip.toStringAsFixed(2)}'),
                 ),
 
             ]
