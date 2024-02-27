@@ -62,7 +62,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
   tagPayer(String name) {
     setState((){ 
       tagging = false; 
-      isPayerTagged = false;
+      onePayerTagged = false;
       for (var idx in selectedItems) {
         receipt.entries[idx].payer = name;
       }
