@@ -166,10 +166,9 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: [DEV] Consider design of back button when user flow is not linear,
-      // e.g., when the user goes back and forth between editing and the summary.
       appBar: AppBar(
         title: const Text('Receipt Summary'),
+        // automaticallyImplyLeading: false, // disable back button
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.home),
