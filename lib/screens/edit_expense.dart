@@ -126,14 +126,19 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end, // Aligns widgets at the bottom, useful if they have different heights
                   children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                     // TODO: [URGENT] Add for loops for remove item icons
-                    // for (var i = 0; i < receipt.entries.length; i++)
-                    //         IconButton(
-                    //           icon: Icon(Icons.remove_circle_outline),
-                    //           onPressed: () {
-                    //             removeItemAndCost(i);
-                    //           },
-                    //         ),
+                    children: [
+                      for (var i = 0; i < receipt.entries.length; i++)
+                             IconButton(
+                              icon: Icon(Icons.remove_circle_outline),
+                              onPressed: () {
+                                 removeItemAndCost(i);
+                              },
+                             ),
+                      ],
+                    ),
                     SizedBox(width: 10), // Provides spacing between the button and the text fields
                     Expanded(
                       flex: 2, 

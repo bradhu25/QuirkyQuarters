@@ -298,25 +298,30 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
               //("Tag Payer") OR a TextField should appear to fill out the payer's name.
               // Please keep this logic and encompass the expression in whatever is necessary 
               // to format and get it to compile.
-              // tagging 
-              // ? TextField(
-              //     controller: payerController,
-              //     style: Theme.of(context).textTheme.headlineSmall,
-              //     textAlign: TextAlign.center,
-              //     decoration: InputDecoration(
-              //       hintText: 'Enter Name...',
-              //       border: InputBorder.none,
-              //     ),
-              //     onSubmitted: (name) {
-              //       tagPayer(name);       
-              //     },
-              //   )
-              // : ElevatedButton(
-              //     onPressed: () {
-              //       setState((){ tagging = true; });
-              //     }, 
-              //     child: Text("Tag Payer")
-              //   ),
+               
+               tagging 
+               ? Expanded (
+                  child: TextField(
+                    controller: payerController,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Name...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0)
+                      ),
+                    ),
+                    onSubmitted: (name) {
+                      tagPayer(name); 
+                    },
+                  )
+               )
+               : ElevatedButton(
+                   onPressed: () {
+                     setState((){ tagging = true; });
+                   }, 
+                   child: Text("Tag Payer")
+                 ),
               ElevatedButton(
                 onPressed: () {
                   goToSplitSummary();
