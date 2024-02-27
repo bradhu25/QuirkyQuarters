@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/item_cost_payer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'home_page.dart';
 
 class SplitSummaryRoute extends StatefulWidget {
   const SplitSummaryRoute({super.key});
@@ -97,12 +98,48 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Split Summary'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.home),
+            tooltip: 'Go Home',
+            onPressed: () {
+              // Navigator.of(context).pushNamed('/'); // go back to homepage route
+              _showReturnHomeDialog(context);
+            },
+          ),
+        ],
       ),
       body: ListView(
         children: [
           ...payerTiles,
         ],
       ),
+    );
+  }
+
+  void _showReturnHomeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Return to Home Page'),
+          content: const Text('Are you sure? Unsaved changes will be lost.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).popUntil((route) => route.isFirst); // Pop back to the first route in the stack
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

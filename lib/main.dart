@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_page.dart';
+import 'screens/join_receipt.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -9,8 +10,12 @@ Future<void> main () async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-runApp(const MaterialApp(
+runApp(MaterialApp( // routes not const
     title: 'Quirky Quarters',
-    home: HomePage(),
+    // home: HomePage(), // moved to routes
+    routes: {
+    '/': (context) => HomePage(),
+    '/joinReceipt': (context) => JoinReceiptRoute(), 
+  },
   ));
 }

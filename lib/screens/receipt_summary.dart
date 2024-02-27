@@ -5,6 +5,7 @@ import 'package:quirky_quarters/screens/edit_expense.dart';
 import 'package:quirky_quarters/screens/split_summary.dart';
 import 'package:quirky_quarters/item_cost_payer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'home_page.dart';
 
 class ReceiptSummaryRoute extends StatefulWidget {
   const ReceiptSummaryRoute({super.key});
@@ -169,6 +170,17 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
       // e.g., when the user goes back and forth between editing and the summary.
       appBar: AppBar(
         title: const Text('Receipt Summary'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.home),
+            tooltip: 'Go Home',
+            onPressed: () {
+              // Navigator.of(context).pushNamed('/'); // go back to homepage route
+              // Navigator.of(context).push(_backToHome());
+              _showReturnHomeDialog(context);
+            },
+          ),
+        ],
       ),
       body: Center(
         child: DefaultTextStyle(
@@ -334,6 +346,52 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
           ),
         ),
       ),
+    );
+  }
+
+  // animation to go back home. can be reused for other home navigations. 
+  // swipes left animation instead of default swipe right animation that Navigator.of(context).pushNamed('/') would do
+  // not currently called but keeping in case helpful for future animations
+  Route _backToHome() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => const HomePage(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+
+  void _showReturnHomeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Return to Home Page'),
+          content: const Text('Are you sure? Unsaved changes will be lost.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).popUntil((route) => route.isFirst); // Pop back to the first route in the stack
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
