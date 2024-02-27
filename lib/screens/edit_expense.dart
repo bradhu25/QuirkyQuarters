@@ -94,13 +94,34 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+
+@override
+Widget build(BuildContext context) {
+  return WillPopScope(
+    onWillPop: () async {
+      return await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Unsaved Changes'),
+          content: Text('Are you sure you want to leave without saving?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('Yes'),
+            ),
+          ],
+        ),
+      ) ?? false; 
+    },
+    child: Scaffold( 
       appBar: AppBar(
         title: const Text('Edit Expense'),
       ),
-      body: SingleChildScrollView(
+            body: SingleChildScrollView(
         child: Center(
           child: DefaultTextStyle(
             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
@@ -306,6 +327,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
               ),
             ),
           ),
+      ),
+      
     );
   }
 }
