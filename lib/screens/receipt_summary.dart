@@ -43,7 +43,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
 
   Set<int> selectedItems = {};
   var tagging = false;
-  var isPayerTagged = false;
+  var minPayersReached = false;
 
   final TextEditingController payerController = TextEditingController();
   final TextEditingController divideController = TextEditingController();
@@ -313,7 +313,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                     ),
                     onSubmitted: (name) {
                       tagPayer(name); 
-                      isPayerTagged = true;
+                      minPayersReached = true;
                     },
                   )
                )
@@ -323,7 +323,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                    }, 
                    child: Text("Select Entries")
                  ),
-              if (isPayerTagged)
+              if (minPayersReached)
                 ElevatedButton(
                   onPressed: () {
                     goToSplitSummary();
