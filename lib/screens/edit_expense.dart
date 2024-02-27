@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/receipt_summary.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quirky_quarters/item_cost_payer.dart';
+import 'package:quirky_quarters/screens/photo.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class EditExpenseRoute extends StatefulWidget {
   const EditExpenseRoute({super.key});
@@ -93,6 +95,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
         receipt.entries.removeAt(i);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -293,12 +296,24 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                   ),
                   IconButton(
                     icon: Icon(Icons.camera_alt_outlined),
-                    onPressed: () {
-                      // TODO: [DEV] Implement camera icon functionality
-                      /*Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const CameraPage()),
-                      );*/
+                    onPressed: () async {
+                      //TODO: [DEV] Implement camera icon functionality
+                      var cameraStatus = await Permission.camera.status;
+                      if (!cameraStatus.isGranted) {
+                        await Permission.camera.request();
+                      }
+                      if (await Permission.camera.isGranted) {
+                        // Camera permission is granted, navigate to the camera page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const CameraPage()),
+                        );
+                      } else {
+                        // Handle the case when the user refuses to grant the permission
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Camera permission is required to take pictures")),
+                        );
+                      }
                     },
                   ),
                 ],
