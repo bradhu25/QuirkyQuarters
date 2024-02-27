@@ -43,6 +43,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
 
   Set<int> selectedItems = {};
   var tagging = false;
+  var onePayerTagged = false;
 
   final TextEditingController payerController = TextEditingController();
   final TextEditingController divideController = TextEditingController();
@@ -61,6 +62,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
   tagPayer(String name) {
     setState((){ 
       tagging = false; 
+      isPayerTagged = false;
       for (var idx in selectedItems) {
         receipt.entries[idx].payer = name;
       }
@@ -222,13 +224,13 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                         ),
                         Expanded(
                           flex: 2,
-                          child: Text("Name", style: Theme.of(context).textTheme.headlineMedium),
+                          child: Text("Payer", style: Theme.of(context).textTheme.headlineMedium),
                         ),
                       ],
                     ),
                   ),
                   // Dynamic List of Items
-                  for (var i = 0; i < receipt.entries.length; i++)
+                  for (var i = 0; i < receipt.entries.length; i++) ...[
                     Row(
                       children: [
                         IconButton(
@@ -274,9 +276,12 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                         ),
                       ],
                     ),
+                    if (i < receipt.entries.length - 1) // Check to avoid adding a divider after the last item
+                        Divider(color: Colors.grey),
+                  ],
                 ],
               ),  
-            ]
+            ],
           )
         ),
       ),
@@ -293,11 +298,6 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                 },
                 child: Text("Share Code"),
               ),
-              // TODO: [URGENT] This is a ternary expression that determines whether an
-              // ElevatedButton should appear to give you the option to tag a payer 
-              //("Tag Payer") OR a TextField should appear to fill out the payer's name.
-              // Please keep this logic and encompass the expression in whatever is necessary 
-              // to format and get it to compile.
                
                tagging 
                ? Expanded (
@@ -306,13 +306,14 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                     style: Theme.of(context).textTheme.headlineSmall,
                     textAlign: TextAlign.center,
                     decoration: InputDecoration(
-                      hintText: 'Enter Name...',
+                      hintText: 'Enter payer name...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0)
                       ),
                     ),
                     onSubmitted: (name) {
                       tagPayer(name); 
+                      onePayerTagged = true;
                     },
                   )
                )
@@ -320,14 +321,15 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                    onPressed: () {
                      setState((){ tagging = true; });
                    }, 
-                   child: Text("Tag Payer")
+                   child: Text("Select Entries")
                  ),
-              ElevatedButton(
-                onPressed: () {
-                  goToSplitSummary();
-                },
-                child: Text("Next"),
-              ),
+              if (onePayerTagged)
+                ElevatedButton(
+                  onPressed: () {
+                    goToSplitSummary();
+                  },
+                  child: Text("Next"),
+                ),
             ],
           ),
         ),

@@ -128,7 +128,6 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
-                    // TODO: [URGENT] Add for loops for remove item icons
                     children: [
                       for (var i = 0; i < receipt.entries.length; i++)
                              IconButton(
