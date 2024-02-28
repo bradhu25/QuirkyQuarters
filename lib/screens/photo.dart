@@ -113,7 +113,7 @@ class _CameraPageState extends State<CameraPage> {
         FloatingActionButton(
           onPressed: () => _pickImageFromGallery(),
           tooltip: 'Upload Image',
-          child: const Icon(Icons.browse_gallery),
+          child: const Icon(Icons.add_a_photo),
         ),
       ],
       ),
