@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({Key? key}) : super(key: key);
@@ -155,11 +155,47 @@ class DisplayPictureScreen extends StatelessWidget {
 
   const DisplayPictureScreen({Key? key, required this.imagePath}) : super(key: key);
 
+  Future<void> _performTextRecognition(BuildContext context) async {
+    final inputImage = InputImage.fromFilePath(imagePath);
+    final textDetector = GoogleMlKit.vision.textRecognizer();
+    final RecognizedText recognizedText = await textDetector.processImage(inputImage);
+    await textDetector.close();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Recognized Text'),
+          content: SingleChildScrollView(
+            child: Text(recognizedText.text),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Display the Picture')),
-      body: Image.file(File(imagePath)),
+      appBar: AppBar(
+        title: Text('Display the Picture'),
+        actions: [
+            IconButton(
+              icon: const Icon(Icons.auto_awesome_mosaic),
+              onPressed: () => _performTextRecognition(context),
+              tooltip: 'Perform OCR',
+            ),
+          ],
+        ),
+        body: Image.network(imagePath),
     );
   }
 }
