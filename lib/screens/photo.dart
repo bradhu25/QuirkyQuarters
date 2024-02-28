@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({Key? key}) : super(key: key);
@@ -87,39 +86,11 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
-   void _showPickOptionsDialog(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                  leading: Icon(Icons.camera),
-                  title: Text('Take a picture'),
-                  onTap: () {
-                    _takePicture();
-                    Navigator.of(context).pop();
-                  }),
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Choose from gallery'),
-                onTap: () {
-                  _pickImageFromGallery();
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      }
-    );
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Take a picture')),
+      appBar: AppBar(title: const Text('Capture Image')),
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
@@ -140,9 +111,9 @@ class _CameraPageState extends State<CameraPage> {
         ),
         SizedBox(height: 10),
         FloatingActionButton(
-          onPressed: () => _showPickOptionsDialog(context),
-          tooltip: 'Pick Image',
-          child: const Icon(Icons.add_a_photo),
+          onPressed: () => _pickImageFromGallery(),
+          tooltip: 'Upload Image',
+          child: const Icon(Icons.camera_alt_outlined),
         ),
       ],
       ),
@@ -155,7 +126,7 @@ class DisplayPictureScreen extends StatelessWidget {
 
   const DisplayPictureScreen({Key? key, required this.imagePath}) : super(key: key);
 
-  Future<void> _performTextRecognition(BuildContext context) async {
+  /*Future<void> _performTextRecognition(BuildContext context) async {
     final inputImage = InputImage.fromFilePath(imagePath);
     final textDetector = GoogleMlKit.vision.textRecognizer();
     final RecognizedText recognizedText = await textDetector.processImage(inputImage);
@@ -180,19 +151,19 @@ class DisplayPictureScreen extends StatelessWidget {
         );
       },
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Display the Picture'),
+        title: Text('Confirm Image'),
         actions: [
-            IconButton(
+            /*IconButton(
               icon: const Icon(Icons.auto_awesome_mosaic),
               onPressed: () => _performTextRecognition(context),
               tooltip: 'Perform OCR',
-            ),
+            ),*/
           ],
         ),
         body: Image.network(imagePath),

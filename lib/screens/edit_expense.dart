@@ -96,6 +96,23 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     });
   }
 
+  Future<void> _handleCameraPermissionAndNavigate() async {
+    final cameraStatus = await Permission.camera.status;
+    if (!cameraStatus.isGranted) {
+      await Permission.camera.request();
+    }
+    if (await Permission.camera.isGranted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CameraPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Camera permission is required to take pictures")),
+      );
+    }
+  }
+
 
 @override
 Widget build(BuildContext context) {
@@ -316,25 +333,7 @@ Widget build(BuildContext context) {
                   ),
                   IconButton(
                     icon: Icon(Icons.camera_alt_outlined),
-                    onPressed: () async {
-                      //TODO: [DEV] Implement camera icon functionality
-                      var cameraStatus = await Permission.camera.status;
-                      if (!cameraStatus.isGranted) {
-                        await Permission.camera.request();
-                      }
-                      if (await Permission.camera.isGranted) {
-                        // Camera permission is granted, navigate to the camera page
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const CameraPage()),
-                        );
-                      } else {
-                        // Handle the case when the user refuses to grant the permission
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Camera permission is required to take pictures")),
-                        );
-                      }
-                    },
+                    onPressed: _handleCameraPermissionAndNavigate,
                   ),
                 ],
               ),
