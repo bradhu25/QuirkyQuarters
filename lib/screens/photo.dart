@@ -57,7 +57,7 @@ class _CameraPageState extends State<CameraPage> {
       // A capture is already pending, do nothing.
       return;
     }
-
+    //TODO: [DEV] Ensure camera can flip both ways
     try {
       await _initializeControllerFuture;
       final image = await _controller!.takePicture();
@@ -68,7 +68,7 @@ class _CameraPageState extends State<CameraPage> {
         ),
       );
     } catch (e) {
-      print(e); // TODO: [DEV] Handle the exception properly.
+      print(e); 
     }
   }
 
@@ -113,7 +113,7 @@ class _CameraPageState extends State<CameraPage> {
         FloatingActionButton(
           onPressed: () => _pickImageFromGallery(),
           tooltip: 'Upload Image',
-          child: const Icon(Icons.camera_alt_outlined),
+          child: const Icon(Icons.browse_gallery),
         ),
       ],
       ),
@@ -125,6 +125,9 @@ class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
 
   const DisplayPictureScreen({Key? key, required this.imagePath}) : super(key: key);
+
+// TODO: [DEV] Debug this function/move to new OCR page so it can recognize text and list it out. 
+// Function is supposed to pull recognized text. 
 
   /*Future<void> _performTextRecognition(BuildContext context) async {
     final inputImage = InputImage.fromFilePath(imagePath);
