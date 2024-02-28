@@ -170,119 +170,121 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
       appBar: AppBar(
         title: const Text('Receipt Summary'),
       ),
-      body: Center(
-        child: DefaultTextStyle(
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                  height: 2
+      body: SingleChildScrollView(
+        child: Center(
+          child: DefaultTextStyle(
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    height: 2
+                  ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded( 
+                      child: Stack(
+                        alignment: Alignment.center, 
+                        children: [
+                          Text(
+                            receipt.title,
+                            style: Theme.of(context).textTheme.headlineLarge,
+                            textAlign: TextAlign.center,
+                          ),
+                          Positioned(
+                            right: 0, 
+                            child: IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded( 
-                    child: Stack(
-                      alignment: Alignment.center, 
-                      children: [
-                        Text(
-                          receipt.title,
-                          style: Theme.of(context).textTheme.headlineLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                        Positioned(
-                          right: 0, 
-                          child: IconButton(
-                            icon: Icon(Icons.edit),
+                // TODO: [DEV] Load expense title in from Firebase
+                Column(
+                  children: [
+                    // Header Row with Titles
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+                      child: Row(
+                        children: [
+                          SizedBox(width: 48), // Space allocated for the divide symbol button
+                          Expanded(
+                            flex: 3,
+                            child: Text("Item", style: Theme.of(context).textTheme.headlineMedium),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text("Cost", style: Theme.of(context).textTheme.headlineMedium),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text("Payer", style: Theme.of(context).textTheme.headlineMedium),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Dynamic List of Items
+                    for (var i = 0; i < receipt.entries.length; i++) ...[
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
-                              );
+                              // TODO: [DEV] Implement divide entry functionality.
+                              showDivideDialog(context, i);
                             },
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              // TODO: [DEV] Load expense title in from Firebase
-              Column(
-                children: [
-                  // Header Row with Titles
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-                    child: Row(
-                      children: [
-                        SizedBox(width: 48), // Space allocated for the divide symbol button
-                        Expanded(
-                          flex: 3,
-                          child: Text("Item", style: Theme.of(context).textTheme.headlineMedium),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text("Cost", style: Theme.of(context).textTheme.headlineMedium),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text("Payer", style: Theme.of(context).textTheme.headlineMedium),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Dynamic List of Items
-                  for (var i = 0; i < receipt.entries.length; i++) ...[
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                          onPressed: () {
-                            // TODO: [DEV] Implement divide entry functionality.
-                            showDivideDialog(context, i);
-                          },
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () { selectItem(i); },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: selectedItems.contains(i) ? Colors.lightBlueAccent.withOpacity(0.5) : Colors.transparent, // Highlight if selected
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 4.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 12), 
-                                        child: Text(receipt.entries[i].item),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () { selectItem(i); },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: selectedItems.contains(i) ? Colors.lightBlueAccent.withOpacity(0.5) : Colors.transparent, // Highlight if selected
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 12), 
+                                          child: Text(receipt.entries[i].item),
+                                        ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text("\$${receipt.entries[i].cost.toStringAsFixed(2)}"),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text(receipt.entries[i].payer ?? ""),
-                                    ),
-                                  ],
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text("\$${receipt.entries[i].cost.toStringAsFixed(2)}"),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(receipt.entries[i].payer ?? ""),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    if (i < receipt.entries.length - 1) // Check to avoid adding a divider after the last item
-                        Divider(color: Colors.grey),
+                        ],
+                      ),
+                      if (i < receipt.entries.length - 1) // Check to avoid adding a divider after the last item
+                          Divider(color: Colors.grey),
+                    ],
                   ],
-                ],
-              ),  
-            ],
-          )
+                ),  
+              ],
+            )
+          ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
