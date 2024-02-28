@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({Key? key}) : super(key: key);
@@ -72,6 +73,49 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  Future<void> _pickImageFromGallery() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DisplayPictureScreen(imagePath: pickedFile.path),
+        ),
+      );
+    }
+  }
+
+   void _showPickOptionsDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                  leading: Icon(Icons.camera),
+                  title: Text('Take a picture'),
+                  onTap: () {
+                    _takePicture();
+                    Navigator.of(context).pop();
+                  }),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Choose from gallery'),
+                onTap: () {
+                  _pickImageFromGallery();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,10 +130,21 @@ class _CameraPageState extends State<CameraPage> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _takePicture,
-        tooltip: 'Take Picture',
-        child: const Icon(Icons.camera),
+      floatingActionButton: Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        FloatingActionButton(
+          onPressed: _takePicture,
+          tooltip: 'Take Picture',
+          child: const Icon(Icons.camera),
+        ),
+        SizedBox(height: 10),
+        FloatingActionButton(
+          onPressed: () => _showPickOptionsDialog(context),
+          tooltip: 'Pick Image',
+          child: const Icon(Icons.add_a_photo),
+        ),
+      ],
       ),
     );
   }
