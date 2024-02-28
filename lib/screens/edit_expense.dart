@@ -91,6 +91,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     setState(() {
         receipt.total -= receipt.entries[i].cost;
         receipt.entries.removeAt(i);
+        itemControllers.removeAt(i);
+        costControllers.removeAt(i);
     });
   }
 
