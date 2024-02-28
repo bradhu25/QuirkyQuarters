@@ -118,8 +118,8 @@ Widget build(BuildContext context) {
           ],
         ),
       ) ?? false; 
-  },
-  child: Scaffold(
+    },
+    child: Scaffold(
       appBar: AppBar(
         title: const Text('Edit Expense'),
       ),
