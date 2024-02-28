@@ -62,6 +62,7 @@ class _CameraPageState extends State<CameraPage> {
       await _initializeControllerFuture;
       final image = await _controller!.takePicture();
       Navigator.push(
+        //TODO: [DEV] Potentially guard use with 'mounted' check as opposed to context
         context,
         MaterialPageRoute(
           builder: (context) => DisplayPictureScreen(imagePath: image.path),
@@ -162,8 +163,9 @@ class DisplayPictureScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Confirm Image'),
         actions: [
+          //TODO: [DEV] Give option to confirm image and automatically run OCR as opposed to having OCR be a button
             /*IconButton(
-              icon: const Icon(Icons.auto_awesome_mosaic),
+              icon: const Icon(Icons.),
               onPressed: () => _performTextRecognition(context),
               tooltip: 'Perform OCR',
             ),*/

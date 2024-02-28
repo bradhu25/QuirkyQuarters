@@ -5,7 +5,7 @@ import 'package:quirky_quarters/screens/view_receipts.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
+  //TODO: [UI] Change font, background, and buttons to appear more aesthetically pleasing
   @override
   Widget build(BuildContext context) {
     return Scaffold(
