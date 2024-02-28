@@ -93,8 +93,11 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     setState(() {
         receipt.total -= receipt.entries[i].cost;
         receipt.entries.removeAt(i);
+        itemControllers.removeAt(i);
+        costControllers.removeAt(i);
     });
   }
+
 
   Future<void> _handleCameraPermissionAndNavigate() async {
     final cameraStatus = await Permission.camera.status;
