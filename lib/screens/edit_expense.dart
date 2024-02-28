@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/receipt_summary.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quirky_quarters/item_cost_payer.dart';
+import 'package:quirky_quarters/screens/photo.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class EditExpenseRoute extends StatefulWidget {
   const EditExpenseRoute({super.key});
@@ -94,6 +96,24 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
         itemControllers.removeAt(i);
         costControllers.removeAt(i);
     });
+  }
+
+
+  Future<void> _handleCameraPermissionAndNavigate() async {
+    final cameraStatus = await Permission.camera.status;
+    if (!cameraStatus.isGranted) {
+      await Permission.camera.request();
+    }
+    if (await Permission.camera.isGranted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CameraPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Camera permission is required to take pictures")),
+      );
+    }
   }
 
 
@@ -316,13 +336,7 @@ Widget build(BuildContext context) {
                   ),
                   IconButton(
                     icon: Icon(Icons.camera_alt_outlined),
-                    onPressed: () {
-                      // TODO: [DEV] Implement camera icon functionality
-                      /*Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const CameraPage()),
-                      );*/
-                    },
+                    onPressed: _handleCameraPermissionAndNavigate,
                   ),
                 ],
               ),
