@@ -121,7 +121,7 @@ Widget build(BuildContext context) {
       appBar: AppBar(
         title: const Text('Edit Expense'),
       ),
-            body: SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Center(
           child: DefaultTextStyle(
             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
