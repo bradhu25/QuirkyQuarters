@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/item_cost_payer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quirky_quarters/screens/payment.dart';
 import 'home_page.dart';
 
 class SplitSummaryRoute extends StatefulWidget {
@@ -111,6 +112,15 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
       body: ListView(
         children: [
           ...payerTiles,
+          ElevatedButton(
+            child: Text('Square Up'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PaymentPage()),
+              );
+            },
+          ),
         ],
       ),
     );
