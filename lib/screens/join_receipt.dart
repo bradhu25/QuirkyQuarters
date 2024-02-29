@@ -15,8 +15,6 @@ class JoinReceiptRoute extends StatelessWidget {
             tooltip: 'Go Home',
             onPressed: () {
               Navigator.pop(context); // go back to previous page
-              // Navigator.of(context).pushNamed('/'); // go back to homepage route
-              // Navigator.of(context).push(_backToHome());
             },
           ),
         ],
