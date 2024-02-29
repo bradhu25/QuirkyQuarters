@@ -77,7 +77,7 @@ class Receipt<T1> {
     for (var entry in entries) {
       receiptString += "     ${entry.item}, ${entry.cost}, ${entry.payer}\n";
     }
-    print("DONE");
+    
     return receiptString;
   }
 }
