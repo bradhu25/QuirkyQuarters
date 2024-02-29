@@ -41,7 +41,7 @@ class _PaymentPageState extends State<PaymentPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 159, 224, 255),
-        automaticallyImplyLeading: false, // disable back button
+        // automaticallyImplyLeading: false, // disable back button
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.home),
