@@ -18,6 +18,12 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   Receipt receipt = Receipt.emptyReceipt();
   String receiptId = generateCode();
 
+  final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
+  List<TextEditingController> itemControllers = [TextEditingController()];
+  List<TextEditingController> costControllers = [TextEditingController()];
+  final TextEditingController taxController = TextEditingController();
+  final TextEditingController tipController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -31,17 +37,20 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
         setState(() {
           receiptId = widget.receiptId!;
           receipt = fetchReceipt;
-          print (receipt.toString());
+          List<TextEditingController> existingItems = [];
+          List<TextEditingController> existingCosts = [];
+          
+          for (var entry in receipt.entries) {
+            existingItems.add(TextEditingController(text: entry.item));
+            existingCosts.add(TextEditingController(text: entry.cost.toStringAsFixed(2)));
+          }
+
+          itemControllers = [...existingItems, TextEditingController()];
+          costControllers = [...existingCosts, TextEditingController()];
         });
       }
     }
   }
-
-  final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
-  List<TextEditingController> itemControllers = [TextEditingController()];
-  List<TextEditingController> costControllers = [TextEditingController()];
-  final TextEditingController taxController = TextEditingController();
-  final TextEditingController tipController = TextEditingController();
 
   addExpensesToDatabase() {
     var tax = double.tryParse(taxController.text);
