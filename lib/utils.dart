@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 class Receipt<T1> {
   String title;
@@ -76,6 +77,7 @@ class Receipt<T1> {
     for (var entry in entries) {
       receiptString += "     ${entry.item}, ${entry.cost}, ${entry.payer}\n";
     }
+    print("DONE");
     return receiptString;
   }
 }
@@ -110,4 +112,24 @@ class ItemCostPayer<T1, T2, T3> {
       if (payer != null) "payer": payer,
     };
   }
+}
+
+String generateCode() {
+    var rng = Random();
+    var code = List.generate(6, (_) => rng.nextInt(9)).join();
+    return code;
+}
+
+Future<Receipt?> fetchReceiptData(String receiptId) async {
+    // Read from Firebase
+    final db = FirebaseFirestore.instance
+    .collection("receipt_book")
+    .doc(receiptId)
+    .withConverter(
+      fromFirestore: Receipt.fromFirestore,
+      toFirestore: (Receipt obj, _) => obj.toFirestore(),
+    );
+
+    final docSnap = await db.get();
+    return docSnap.data();
 }

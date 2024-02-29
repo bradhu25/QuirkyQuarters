@@ -1,19 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/receipt_summary.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:quirky_quarters/item_cost_payer.dart';
+import 'package:quirky_quarters/utils.dart';
 import 'package:quirky_quarters/screens/photo.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class EditExpenseRoute extends StatefulWidget {
-  const EditExpenseRoute({super.key});
+  final String? receiptId;
+  const EditExpenseRoute({super.key, this.receiptId});
 
   @override
   State<EditExpenseRoute> createState() => _EditExpenseRouteState();
 }
 
 class _EditExpenseRouteState extends State<EditExpenseRoute> {
+
   Receipt receipt = Receipt.emptyReceipt();
+  String receiptId = generateCode();
+
+  @override
+  void initState() {
+    super.initState();
+    initStateAsync();
+  }
+
+  void initStateAsync() async {
+    if (widget.receiptId != null) {
+      Receipt? fetchReceipt = await fetchReceiptData(widget.receiptId!);
+      if (fetchReceipt != null) {
+        setState(() {
+          receiptId = widget.receiptId!;
+          receipt = fetchReceipt;
+          print (receipt.toString());
+        });
+      }
+    }
+  }
 
   final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
   List<TextEditingController> itemControllers = [TextEditingController()];
@@ -31,7 +53,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     // TODO: [DEV] Consider update vs add case.
     FirebaseFirestore.instance
         .collection('receipt_book')
-        .doc("xMvRGYWtwhYYCEQscFZo")
+        .doc(receiptId)
         .withConverter(
           fromFirestore: Receipt.fromFirestore,
           toFirestore: (Receipt obj, options) => obj.toFirestore(),
@@ -47,7 +69,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     addExpensesToDatabase();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ReceiptSummaryRoute()),
+      MaterialPageRoute(builder: (context) => ReceiptSummaryRoute(receiptId: receiptId)),
     );
   }
 
