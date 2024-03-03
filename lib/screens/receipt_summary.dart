@@ -1,14 +1,15 @@
-import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/edit_expense.dart';
 import 'package:quirky_quarters/screens/split_summary.dart';
-import 'package:quirky_quarters/item_cost_payer.dart';
+import 'package:quirky_quarters/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'home_page.dart';
 
 class ReceiptSummaryRoute extends StatefulWidget {
-  const ReceiptSummaryRoute({super.key});
+  final String receiptId;
+  const ReceiptSummaryRoute({super.key, required this.receiptId});
+
   @override
   State<ReceiptSummaryRoute> createState() => _ReceiptSummaryRouteState();
 }
@@ -16,29 +17,21 @@ class ReceiptSummaryRoute extends StatefulWidget {
 class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
 
   Receipt receipt = Receipt.emptyReceipt();
+  String receiptId = "";
 
   @override
   void initState() {
     super.initState();
-    fetchReceiptData();
+    initStateAsync();
   }
 
-  void fetchReceiptData() async {
-    // Read from Firebase
-    // Populate itemsCostsPayers with receipt list
-    final db = FirebaseFirestore.instance
-    .collection("receipt_book")
-    .doc("xMvRGYWtwhYYCEQscFZo")
-    .withConverter(
-      fromFirestore: Receipt.fromFirestore,
-      toFirestore: (Receipt obj, _) => obj.toFirestore(),
-    );
-
-    final docSnap = await db.get();
-    if (docSnap.data != null) {
+  void initStateAsync() async {
+    Receipt? fetchReceipt = await fetchReceiptData(widget.receiptId);
+    if (fetchReceipt != null) {
       setState(() {
-        receipt = docSnap.data()!; // Convert to Receipt object
-      }); 
+        receiptId = widget.receiptId;
+        receipt = fetchReceipt;
+      });
     }
   }
 
@@ -70,13 +63,6 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
       selectedItems.clear(); 
     });
     payerController.clear();
-  }
-
-
-  String generateCode() {
-    var rng = Random();
-    var code = List.generate(6, (_) => rng.nextInt(9)).join();
-    return code;
   }
 
   void showCodeDialog(BuildContext context, String code) {
@@ -146,7 +132,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
     // TODO: [DEV] Instead of overwritting entire receipt, change only necessary fields.
     FirebaseFirestore.instance
         .collection('receipt_book')
-        .doc("xMvRGYWtwhYYCEQscFZo")
+        .doc(receiptId)
         .withConverter(
           fromFirestore: Receipt.fromFirestore,
           toFirestore: (Receipt obj, options) => obj.toFirestore(),
@@ -159,7 +145,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
     addPayersToDatabase();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SplitSummaryRoute()),
+      MaterialPageRoute(builder: (context) => SplitSummaryRoute(receiptId: receiptId,)),
     );
   }
 
@@ -205,7 +191,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
+                                  MaterialPageRoute(builder: (context) => EditExpenseRoute(receiptId: receiptId)),
                                 );
                               },
                             ),

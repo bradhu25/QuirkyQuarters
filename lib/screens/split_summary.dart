@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:quirky_quarters/item_cost_payer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:quirky_quarters/utils.dart';
 import 'home_page.dart';
 
 class SplitSummaryRoute extends StatefulWidget {
-  const SplitSummaryRoute({super.key});
+  final String receiptId;
+  const SplitSummaryRoute({super.key, required this.receiptId});
 
   @override
   State<SplitSummaryRoute> createState() => _SplitSummaryRouteState();
 }
 
 class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
-  // TODO: [DEV] Fetch using Firebase.
 
   Receipt receipt = Receipt.emptyReceipt();
+  String receiptId = "";
 
   // Mapping for person name and items associated with that person
   Map<String, List<ItemCostPayer>> itemsByPayer = {};
@@ -21,9 +21,19 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
   @override
   void initState() {
     super.initState();
-    // TODO: [DEV] Factor out into utils file.
-    fetchReceiptData();
-    // organizeItemsByPayer();
+    initStateAsync();
+  }
+
+  void initStateAsync() async {   
+    Receipt? fetchReceipt = await fetchReceiptData(widget.receiptId);
+    if (fetchReceipt != null) {
+      setState(() {
+        receiptId = widget.receiptId;
+        receipt = fetchReceipt;
+      });
+    }
+
+    organizeItemsByPayer();
   }
 
   void organizeItemsByPayer() {
@@ -37,25 +47,6 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
         }
       }
     });
-  }
-
-  void fetchReceiptData() async {
-    // Read from Firebase
-    final db = FirebaseFirestore.instance
-    .collection("receipt_book")
-    .doc("xMvRGYWtwhYYCEQscFZo")
-    .withConverter(
-      fromFirestore: Receipt.fromFirestore,
-      toFirestore: (Receipt obj, _) => obj.toFirestore(),
-    );
-
-    final docSnap = await db.get();
-    if (docSnap.data != null) {
-      setState(() {
-        receipt = docSnap.data()!; // Convert to Receipt object
-      }); 
-    }
-    organizeItemsByPayer();
   }
 
   @override
