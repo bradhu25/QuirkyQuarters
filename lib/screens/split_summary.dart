@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/utils.dart';
+import 'home_page.dart';
 
 class SplitSummaryRoute extends StatefulWidget {
   final String receiptId;
@@ -88,12 +89,40 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Split Summary'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.home),
+            tooltip: 'Go Home',
+            onPressed: () {
+              Navigator.of(context).push(_backToHome());
+            },
+          ),
+        ],
       ),
       body: ListView(
         children: [
           ...payerTiles,
         ],
       ),
+    );
+  }
+  // animation to go back home. can be reused for other home navigations. 
+  // swipes left animation instead of default swipe right animation that Navigator.of(context).pushNamed('/') would do
+  // not currently called but keeping in case helpful for future animations
+  Route _backToHome() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => const HomePage(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
     );
   }
 }
