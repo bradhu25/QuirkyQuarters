@@ -73,24 +73,27 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             SizedBox(height: 10),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                joiningReceipt ? 
-                  TextField(
-                    controller: codeController,
-                    decoration: InputDecoration(
-                      labelText: 'Enter Receipt Code',
-                      errorText: errorMessage,
+            FractionallySizedBox(
+              widthFactor: .3,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  joiningReceipt ? 
+                    TextField(
+                      controller: codeController,
+                      decoration: InputDecoration(
+                        labelText: 'Enter Receipt Code',
+                        errorText: errorMessage,
+                      ),
+                      onTapOutside: (_) async { await submitCode(); },
+                      onSubmitted: (_) async { await submitCode(); },
+                    ) : 
+                    ElevatedButton(
+                      child: const Text('Join Receipt'),
+                      onPressed: () { setState(() { joiningReceipt = true; }); },
                     ),
-                    onTapOutside: (_) async { await submitCode(); },
-                    onSubmitted: (_) async { await submitCode(); },
-                  ) : 
-                  ElevatedButton(
-                    child: const Text('Join Receipt'),
-                    onPressed: () { setState(() { joiningReceipt = true; }); },
-                  ),
-              ]
+                ]
+              ),
             ),
             SizedBox(height: 10),
             ElevatedButton(
