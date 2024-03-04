@@ -18,7 +18,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   Receipt receipt = Receipt.emptyReceipt();
   String receiptId = generateCode();
 
-  final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
+  final TextEditingController expenseTitleController = TextEditingController(text: "Untitled Expense");
   List<TextEditingController> itemControllers = [TextEditingController()];
   List<TextEditingController> costControllers = [TextEditingController()];
   final TextEditingController taxController = TextEditingController();
