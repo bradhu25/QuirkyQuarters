@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: 10),
             FractionallySizedBox(
-              widthFactor: .3,
+              widthFactor: .35,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
