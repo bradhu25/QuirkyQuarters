@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quirky_quarters/item_cost_payer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quirky_quarters/screens/payment.dart';
 import 'package:quirky_quarters/utils.dart';

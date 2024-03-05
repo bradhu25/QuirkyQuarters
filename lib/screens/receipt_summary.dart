@@ -201,114 +201,85 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                     ),
                   ],
                 ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded( 
-                    child: Stack(
-                      alignment: Alignment.center, 
-                      children: [
-                        Text(
-                          receipt.title,
-                          style: Theme.of(context).textTheme.headlineLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                        Positioned(
-                          right: 0, 
-                          child: IconButton(
-                            icon: Icon(Icons.edit),
+                // TODO: [DEV] Load expense title in from Firebase
+                Column(
+                  children: [
+                    // Header Row with Titles
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+                      child: Row(
+                        children: [
+                          SizedBox(width: 48), // Space allocated for the divide symbol button
+                          Expanded(
+                            flex: 3,
+                            child: Text("Item", style: Theme.of(context).textTheme.headlineMedium),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text("Cost", style: Theme.of(context).textTheme.headlineMedium),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text("Payer", style: Theme.of(context).textTheme.headlineMedium),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Dynamic List of Items
+                    for (var i = 0; i < receipt.entries.length; i++) ...[
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
-                              );
+                              // TODO: [DEV] Implement divide entry functionality.
+                              showDivideDialog(context, i);
                             },
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              // TODO: [DEV] Load expense title in from Firebase
-              Column(
-                children: [
-                  // Header Row with Titles
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-                    child: Row(
-                      children: [
-                        SizedBox(width: 48), // Space allocated for the divide symbol button
-                        Expanded(
-                          flex: 3,
-                          child: Text("Item", style: Theme.of(context).textTheme.headlineMedium),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text("Cost", style: Theme.of(context).textTheme.headlineMedium),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text("Payer", style: Theme.of(context).textTheme.headlineMedium),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Dynamic List of Items
-                  for (var i = 0; i < receipt.entries.length; i++) ...[
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                          onPressed: () {
-                            // TODO: [DEV] Implement divide entry functionality.
-                            showDivideDialog(context, i);
-                          },
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () { selectItem(i); },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: selectedItems.contains(i) ? Colors.lightBlueAccent.withOpacity(0.5) : Colors.transparent, // Highlight if selected
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 4.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 12), 
-                                        child: Text(receipt.entries[i].item),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () { selectItem(i); },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: selectedItems.contains(i) ? Colors.lightBlueAccent.withOpacity(0.5) : Colors.transparent, // Highlight if selected
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 12), 
+                                          child: Text(receipt.entries[i].item),
+                                        ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text("\$${receipt.entries[i].cost.toStringAsFixed(2)}"),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text(receipt.entries[i].payer ?? ""),
-                                    ),
-                                  ],
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text("\$${receipt.entries[i].cost.toStringAsFixed(2)}"),
+                                      ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Text(receipt.entries[i].payer ?? ""),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    if (i < receipt.entries.length - 1) // Check to avoid adding a divider after the last item
-                        Divider(color: Colors.grey),
+                        ],
+                      ),
+                      if (i < receipt.entries.length - 1) // Check to avoid adding a divider after the last item
+                          Divider(color: Colors.grey),
+                    ],
                   ],
-                ],
-              ),  
-            ],
-          )
+                ),  
+              ],
+            )
+          ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
@@ -363,7 +334,25 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
     );
   }
 
-  
+  // animation to go back home. can be reused for other home navigations. 
+  // swipes left animation instead of default swipe right animation that Navigator.of(context).pushNamed('/') would do
+  // not currently called but keeping in case helpful for future animations
+  Route _backToHome() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => const HomePage(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
 
   void _showReturnHomeDialog(BuildContext context) {
     showDialog(
