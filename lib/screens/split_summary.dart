@@ -109,7 +109,7 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PaymentPage()),
+                MaterialPageRoute(builder: (context) => PaymentScreen(receiptId: receiptId)),
               );
             },
           ),
