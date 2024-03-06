@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:quirky_quarters/screens/edit_expense.dart';
 import 'package:quirky_quarters/screens/split_summary.dart';
 import 'package:quirky_quarters/utils.dart';
@@ -282,55 +283,93 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  String code = generateCode();
-                  showCodeDialog(context, code);
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          setState(() {
+            if (!tagging) {
+              tagging = true;
+            } else {
+                tagging = false;
+              payerController.clear();
+            }
+          });
+        },
+        label: tagging ? Text('Done') : Text('Select Entries'),
+        icon: tagging ? null : Icon(Icons.highlight_alt_outlined),
+      ),
+      bottomNavigationBar: 
+      tagging
+        ? BottomAppBar(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: TextField(
+                controller: payerController,
+                enabled: selectedItems.isNotEmpty, // Enable based on whether items are selected
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(height: 1.0),
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  hintText: 'Enter payer name...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                    enabledBorder: selectedItems.isNotEmpty 
+                      ? OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ) 
+                      : OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                  ),
+                onSubmitted: (value) {
+                  if (selectedItems.isNotEmpty) {
+                    setState(() {
+                      tagPayer(value);
+                      onePayerTagged = true;
+                      tagging = true;
+                    });
+                  }
                 },
-                child: Text("Share Code"),
               ),
-               
-               tagging 
-               ? Expanded (
-                  child: TextField(
-                    controller: payerController,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      hintText: 'Enter payer name...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0)
+            ),
+          )
+        : BottomAppBar(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      String code = generateCode();
+                      showCodeDialog(context, code);
+                    },
+                    child: Text("Share Code"),
+                  ),
+                  ElevatedButton(
+                    onPressed: onePayerTagged ? () => goToSplitSummary() : null,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                          if (!states.contains(MaterialState.disabled)) return Theme.of(context).colorScheme.primary;
+                          return Color.fromARGB(255, 236, 232, 232); // Use grey when the button is disabled
+                        },
+                      ),
+                      foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                          if (!states.contains(MaterialState.disabled)) return Colors.white;
+                          return Colors.black;
+                        },
                       ),
                     ),
-                    onSubmitted: (name) {
-                      tagPayer(name); 
-                      onePayerTagged = true;
-                    },
-                  )
-               )
-               : ElevatedButton(
-                   onPressed: () {
-                     setState((){ tagging = true; });
-                   }, 
-                   child: Text("Select Entries")
-                 ),
-              if (onePayerTagged)
-                ElevatedButton(
-                  onPressed: () {
-                    goToSplitSummary();
-                  },
-                  child: Text("Next"),
-                ),
-            ],
+                    child: Text("Next"),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
     );
   }
 
