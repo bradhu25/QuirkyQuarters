@@ -17,7 +17,7 @@ class Receipt<T1> {
     this.tip,
     required this.total,
     required this.resolvedPayers,
-    required this.fronter}
+    required this.fronter,}
     );
   
   Receipt.emptyReceipt() 
@@ -42,10 +42,10 @@ class Receipt<T1> {
       tip: data?['tip'],
       total: data?['total'],
       resolvedPayers: [
-        for (var payer in data?['entries'].payer)
-          payer.toString(),
+        for (var entry in data?['entries'])
+          entry.toString(),
       ],
-      fronter: data?['fronter']
+      fronter: data?['fronter'],
     );
   }
 
