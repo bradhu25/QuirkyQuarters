@@ -14,10 +14,11 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
+  bool showWhoAreYou = true;
   Receipt receipt = Receipt.emptyReceipt();
   String? selectedUser;
   String? nonFronter;
-  List<String> payers = []; // Will be fetched from Firestore
+  List<String> nonFronters = []; 
   String? fronter;
   List<String> names = [];
   double? amountOwed;
@@ -41,15 +42,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
   void fetchFronterAndPayers() async {
     setState(() {
       fronter = receipt.fronter; 
-      payers = receipt.entries
+      Set<String> uniquePayers = receipt.entries 
           .map((entry) => entry.payer ?? '') // Extract payers from entries
-          .toSet() // Convert list of payers to a set to eliminate duplicates
-          .toList(); // Convert back to a list
+          .toSet(); // Convert list of payers to a set to eliminate duplicates 
+      if (uniquePayers.contains(fronter)) {
+        uniquePayers.remove(fronter);
+      }
+      nonFronters = uniquePayers.toList(); // Convert back to list
 
-      names = (fronter?.isNotEmpty ?? false) ? [fronter!] : [];
-      names.addAll(payers.where((payer) => payer.isNotEmpty)); // Ensures no empty names are added
+      names = nonFronters.toList();
+      names.add(fronter!);
     });
-    // }
   }
 
   @override
@@ -63,22 +66,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            DropdownButton<String>(
-              hint: Text('Who are you?'),
-              value: selectedUser,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedUser = newValue;
-                });
-              },
-              items: names.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
+            if (showWhoAreYou) buildUserDropdown(), // show the who are you dropdown conditionally
             if (selectedUser != null)
+              // get rid of buildUserDropdown
               if (selectedUser == fronter)
                 ...buildFronterUI()
               else
@@ -89,19 +79,45 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
+  Widget buildUserDropdown() {
+    return DropdownButton<String>(
+      hint: Text('Who are you?'),
+      value: selectedUser,
+      onChanged: (String? newValue) {
+        setState(() {
+          selectedUser = newValue;
+          amountOwed = calculateAmountOwedByPayer(newValue); // Update amount owed if needed
+          showWhoAreYou = newValue == null; // make who are you dropdown disappear if a user is selected
+        });
+      },
+      items: names.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+
   List<Widget> buildFronterUI() {
   return [
-    Text('Hi $selectedUser'),
+    Row(
+      mainAxisSize: MainAxisSize.min, // Use minimum space needed by the children
+      children: [
+        Text(' Hi  '),
+        buildUserDropdown(),
+      ],
+    ),
     DropdownButton<String>(
       value: nonFronter,
-      hint: Text('Select name'),
+      hint: Text('Who are you requesting from?'),
       onChanged: (String? newValue) {
         setState(() {
           nonFronter = newValue;
           amountOwed = calculateAmountOwedByPayer(newValue);
         });
       },
-      items: payers.map<DropdownMenuItem<String>>((String value) {
+      items: nonFronters.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -109,20 +125,25 @@ class _PaymentScreenState extends State<PaymentScreen> {
       }).toList(),
     ),
     if (nonFronter != null) 
-      Text('$nonFronter owes you ${amountOwed?.toStringAsFixed(2)}'),
+      Text('owes you ${amountOwed?.toStringAsFixed(2)}'),
     ];
   }
 
   
 
   List<Widget> buildNonFronterUI() {
-    // Build UI for when a non-fronter user is selected
     return [
-      Text('Hi $selectedUser,'),
-      Text('you owe $fronter \$${amountOwed?.toStringAsFixed(2)}'),
-      // ...additional UI elements
+      Row(
+        mainAxisSize: MainAxisSize.min, // Use minimum space needed by the children
+        children: [
+          Text(' Hi  '),
+          buildUserDropdown(),
+        ],
+      ),
+      Text("you owe $fronter \$${amountOwed?.toStringAsFixed(2)}")
     ];
   }
+
 
   double calculateAmountOwedByPayer(String? payerName) {
     if (payerName == null) return 0.0;
