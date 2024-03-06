@@ -135,7 +135,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       }).toList(),
     ),
     SizedBox(height: 25),
-    if (nonFronter != null) 
+    if (nonFronter != null) ...[ 
       Text('owes you ', style: TextStyle(fontSize: 36)),
       Text(
         "${amountOwed?.toStringAsFixed(2)}",
@@ -143,8 +143,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
           fontSize: 40,
           fontWeight: FontWeight.bold, 
           color: Colors.green, 
-        )
-      )
+        ),
+      ),
+    ]
     ];
   }
 
