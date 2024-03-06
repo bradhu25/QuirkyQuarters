@@ -40,6 +40,9 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
           receipt = fetchReceipt;
           List<TextEditingController> existingItems = [];
           List<TextEditingController> existingCosts = [];
+          // Set the fronter and title from the fetched receipt
+          fronterController.text = receipt.fronter ?? "";
+          expenseTitleController.text = receipt.title ?? "";
           
           for (var entry in receipt.entries) {
             existingItems.add(TextEditingController(text: entry.item));
