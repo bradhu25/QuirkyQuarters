@@ -290,7 +290,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  String code = generateCode();
+                  String code = receiptId;
                   showCodeDialog(context, code);
                 },
                 child: Text("Share Code"),
