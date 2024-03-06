@@ -19,6 +19,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   String receiptId = generateCode();
 
   final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
+  final TextEditingController fronterController = TextEditingController(); // for the person who pays the whole bill
   List<TextEditingController> itemControllers = [TextEditingController()];
   List<TextEditingController> costControllers = [TextEditingController()];
   final TextEditingController taxController = TextEditingController();
@@ -53,8 +54,10 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   }
 
   addExpensesToDatabase() {
+    var fronter = fronterController.text;
     var tax = double.tryParse(taxController.text);
     var tip = double.tryParse(tipController.text);
+    receipt.fronter = fronter;
     receipt.tax = tax;
     receipt.tip = tip;
     receipt.title = expenseTitleController.text;
@@ -194,6 +197,17 @@ Widget build(BuildContext context) {
                     decoration: InputDecoration(
                       hintText: 'Expense Title',
                       border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Container(
+                  width: 300,
+                  child: TextField(
+                    controller: fronterController,
+                    decoration: InputDecoration(
+                      labelText: 'Fronter',
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
