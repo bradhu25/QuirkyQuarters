@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'home_page.dart';
 import 'package:quirky_quarters/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -61,27 +62,35 @@ class _PaymentScreenState extends State<PaymentScreen> {
       appBar: AppBar(
         title: Text('Time to Square Up!'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (showWhoAreYou) buildUserDropdown(), // show the who are you dropdown conditionally
-            if (selectedUser != null)
-              // get rid of buildUserDropdown
-              if (selectedUser == fronter)
-                ...buildFronterUI()
-              else
-                ...buildNonFronterUI(),
-          ],
-        ),
+      body: Center(
+        child: Padding(  
+          padding: const EdgeInsets.all(8.0),
+          child: Theme(
+            data: ThemeData(
+              textTheme: TextTheme(
+                bodyLarge: TextStyle(fontSize: 80), // not working
+              ),
+            ),
+            child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                if (showWhoAreYou) buildUserDropdown(), // show the who are you dropdown conditionally
+                if (selectedUser != null)
+                  if (selectedUser == fronter)
+                    ...buildFronterUI()
+                  else
+                    ...buildNonFronterUI(),
+              ],
+            ),
+          ),
+        )
       ),
     );
   }
 
   Widget buildUserDropdown() {
     return DropdownButton<String>(
-      hint: Text('Who are you?'),
+      hint: Text('Who are you?', style: TextStyle(fontSize: 36)),
       value: selectedUser,
       onChanged: (String? newValue) {
         setState(() {
@@ -93,7 +102,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       items: names.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value),
+          child: Text(value, style: TextStyle(fontSize: 36)),
         );
       }).toList(),
     );
@@ -104,13 +113,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
     Row(
       mainAxisSize: MainAxisSize.min, // Use minimum space needed by the children
       children: [
-        Text(' Hi  '),
+        Text(' Hi  ', style: TextStyle(fontSize: 36)),
         buildUserDropdown(),
       ],
     ),
+    SizedBox(height: 20),
     DropdownButton<String>(
       value: nonFronter,
-      hint: Text('Who are you requesting from?'),
+      hint: Text('Who are you requesting?', style: TextStyle(fontSize: 26)),
       onChanged: (String? newValue) {
         setState(() {
           nonFronter = newValue;
@@ -120,12 +130,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
       items: nonFronters.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value),
+          child: Text(value, style: TextStyle(fontSize: 36, color: Colors.red)),
         );
       }).toList(),
     ),
+    SizedBox(height: 25),
     if (nonFronter != null) 
-      Text('owes you ${amountOwed?.toStringAsFixed(2)}'),
+      Text('owes you ', style: TextStyle(fontSize: 36)),
+      Text(
+        "${amountOwed?.toStringAsFixed(2)}",
+        style: TextStyle(  
+          fontSize: 40,
+          fontWeight: FontWeight.bold, 
+          color: Colors.green, 
+        )
+      )
     ];
   }
 
@@ -136,11 +155,35 @@ class _PaymentScreenState extends State<PaymentScreen> {
       Row(
         mainAxisSize: MainAxisSize.min, // Use minimum space needed by the children
         children: [
-          Text(' Hi  '),
+          Text(' Hi  ', 
+            style: TextStyle(fontSize: 36)
+          ),
           buildUserDropdown(),
         ],
       ),
-      Text("you owe $fronter \$${amountOwed?.toStringAsFixed(2)}")
+      SizedBox(height: 20), 
+      Row( 
+        mainAxisAlignment: MainAxisAlignment.center, 
+        children: <Widget>[ 
+          Text("you owe ", style: TextStyle(fontSize: 36)),
+          Text(
+            "$fronter ",
+            style: TextStyle(
+              fontSize: 40,
+              color: Colors.blue, 
+            ),
+          ),
+        ]
+       ),
+      SizedBox(height: 20),
+      Text(
+        "\$${amountOwed?.toStringAsFixed(2)}",
+        style: TextStyle(  
+          fontSize: 40,
+          fontWeight: FontWeight.bold, 
+          color: Colors.green, 
+        )
+      ),
     ];
   }
 
