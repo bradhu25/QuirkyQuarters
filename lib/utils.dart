@@ -42,8 +42,8 @@ class Receipt<T1> {
       tip: data?['tip'],
       total: data?['total'],
       resolvedPayers: [
-        for (var entry in data?['entries'])
-          entry.toString(),
+        for (var payer in data?['entries'].payer)
+          payer.toString(),
       ],
       fronter: data?['fronter']
     );
