@@ -198,20 +198,23 @@ Widget build(BuildContext context) {
                   ),
                 ),
                 SizedBox(height: 30),
+
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end, // Aligns widgets at the bottom, useful if they have different heights
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      for (var i = 0; i < receipt.entries.length; i++)
-                             IconButton(
-                              icon: Icon(Icons.remove_circle_outline),
-                              onPressed: () {
-                                 removeItemAndCost(i);
-                              },
-                             ),
-                      ],
+                        children: List.generate(itemControllers.length, (i) {
+                          bool isEditing = (i == itemControllers.length - 1);
+                          return isEditing
+                              ? SizedBox(width: 48) // remove button spaceholder for auto new entry line
+                              : IconButton(
+                                  icon: Icon(Icons.remove_circle_outline),
+                                  onPressed: () {
+                                    removeItemAndCost(i);
+                                  },
+                                );
+                        }),
                     ),
                     SizedBox(width: 10), // Provides spacing between the button and the text fields
                     Expanded(
@@ -221,21 +224,23 @@ Widget build(BuildContext context) {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
-                            child: Text("Item", style: Theme.of(context).textTheme.headlineSmall),
+                            child: Text("Items", style: Theme.of(context).textTheme.headlineSmall),
                           ),
                           for (var i = 0; i < receipt.entries.length; i++) 
-                            TextField(
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                border: OutlineInputBorder(), 
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                  border: OutlineInputBorder(), 
+                                ),
+                                controller: itemControllers[i],
+                                onTapOutside: (_) { editItem(i); },
+                                onSubmitted: (_) { editItem(i); },
                               ),
-                              controller: itemControllers[i],
-                              onTapOutside: (_) { editItem(i); },
-                              onSubmitted: (_) { editItem(i); },
                             ),
-                          Container(
-                            margin: EdgeInsets.only(right: 10), 
-                            constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
                             child: TextField(
                               decoration: InputDecoration(
                                 hintText: 'Enter Item',
@@ -260,27 +265,29 @@ Widget build(BuildContext context) {
                             child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
                           ),
                           for (var i = 0; i < receipt.entries.length; i++) 
-                            TextField(
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                border: OutlineInputBorder(), 
+                            Padding(
+                              padding: const EdgeInsets.only(right: 18.0),
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                  border: OutlineInputBorder(), 
+                                ),
+                                controller: costControllers[i],
+                                onTapOutside: (_) { editCost(i); },
+                                onSubmitted: (_) { editCost(i); },
                               ),
-                              controller: costControllers[i],
-                              onTapOutside: (_) { editCost(i); },
-                              onSubmitted: (_) { editCost(i); },
                             ),
-                          Container(
-                            margin: EdgeInsets.only(right: 10), // Added to prevent the box from touching the screen's side
-                            constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
+                          Padding(
+                            padding: const EdgeInsets.only(right: 18.0),
                             child: TextField(
                               decoration: InputDecoration(
                                 hintText: 'Enter Cost',
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                border: OutlineInputBorder(), // Adds a border around the TextField
+                                border: OutlineInputBorder(), 
                               ),
                               controller: costControllers.last,
                               onTapOutside: (_){ addNewItemAndCost(); },
-                              onSubmitted: (_){ addNewItemAndCost(); },
+                              onSubmitted: (_) { addNewItemAndCost(); },
                             ),
                           ),
                         ],
@@ -288,6 +295,7 @@ Widget build(BuildContext context) {
                     ),
                   ],
                 ),
+
                 SizedBox(height: 30),
                 Divider(
                   color: Colors.grey, 
