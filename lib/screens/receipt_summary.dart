@@ -32,6 +32,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
       setState(() {
         receiptId = widget.receiptId;
         receipt = fetchReceipt;
+        onePayerTagged = fetchReceipt.entries.any((entry) => entry.payer != null && entry.payer!.isNotEmpty);
       });
     }
   }
