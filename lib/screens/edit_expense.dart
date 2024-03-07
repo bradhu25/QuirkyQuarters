@@ -286,6 +286,7 @@ Widget build(BuildContext context) {
                           ),
                           for (var i = 0; i < receipt.entries.length; i++) 
                             TextField(
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                 border: OutlineInputBorder(), 
