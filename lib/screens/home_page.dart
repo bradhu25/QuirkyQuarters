@@ -24,11 +24,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> submitCode() async {
+    final String code = codeController.text.trim();
+    if (code == "") {
+      return;
+    }
+
     setState(() {
       errorMessage = null;
     });
 
-    final String code = codeController.text.trim();
     final db = FirebaseFirestore.instance
               .collection("receipt_book")
               .doc(code);
@@ -46,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       );
     } else {
       setState(() {
-        errorMessage = 'Invalid code. Please try again.';
+        errorMessage = 'Invalid code.';
       });
     }
   }
@@ -79,14 +83,25 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   joiningReceipt ? 
-                    TextField(
-                      controller: codeController,
-                      decoration: InputDecoration(
-                        labelText: 'Enter Receipt Code',
-                        errorText: errorMessage,
-                      ),
-                      onTapOutside: (_) async { await submitCode(); },
-                      onSubmitted: (_) async { await submitCode(); },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            controller: codeController,
+                            decoration: InputDecoration(
+                              labelText: 'Enter Receipt Code',
+                              errorText: errorMessage,
+                            ),
+                            onTapOutside: (_) async { await submitCode(); },
+                            onSubmitted: (_) async { await submitCode(); },
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () async { await submitCode(); },
+                          icon: Icon(Icons.arrow_forward_ios),
+                        ),
+                      ]
                     ) : 
                     ElevatedButton(
                       child: const Text('Join Receipt'),
