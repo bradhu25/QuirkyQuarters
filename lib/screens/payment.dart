@@ -117,7 +117,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         buildUserDropdown(),
       ],
     ),
-    SizedBox(height: 20),
+    SizedBox(height: 25),
     DropdownButton<String>(
       value: nonFronter,
       hint: Text('Who are you requesting?', style: TextStyle(fontSize: 26)),
@@ -130,7 +130,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       items: nonFronters.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value, style: TextStyle(fontSize: 36, color: Colors.red)),
+          child: Text(value, style: TextStyle(fontSize: 36, color: Colors.blue)),
         );
       }).toList(),
     ),
@@ -138,7 +138,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     if (nonFronter != null) ...[ 
       Text('owes you ', style: TextStyle(fontSize: 36)),
       Text(
-        "${amountOwed?.toStringAsFixed(2)}",
+        "\$${amountOwed?.toStringAsFixed(2)}",
         style: TextStyle(  
           fontSize: 40,
           fontWeight: FontWeight.bold, 
@@ -162,7 +162,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           buildUserDropdown(),
         ],
       ),
-      SizedBox(height: 20), 
+      SizedBox(height: 25), 
       Row( 
         mainAxisAlignment: MainAxisAlignment.center, 
         children: <Widget>[ 
