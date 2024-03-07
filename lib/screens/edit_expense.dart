@@ -41,8 +41,11 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
           List<TextEditingController> existingItems = [];
           List<TextEditingController> existingCosts = [];
           // Set the fronter and title from the fetched receipt
-          fronterController.text = receipt.fronter ?? "";
-          expenseTitleController.text = receipt.title ?? "";
+          fronterController.text = receipt.fronter;
+          expenseTitleController.text = receipt.title;
+          taxController.text = receipt.tax != null ? receipt.tax!.toStringAsFixed(2) : "";
+          tipController.text = receipt.tip != null ? receipt.tip!.toStringAsFixed(2) : "";
+
           
           for (var entry in receipt.entries) {
             existingItems.add(TextEditingController(text: entry.item));
@@ -81,6 +84,11 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     if (receipt.entries.isEmpty) {
       return;
     }
+
+    if (fronterController.text == "") {
+      return;
+    }
+
     addExpensesToDatabase();
     Navigator.push(
       context,

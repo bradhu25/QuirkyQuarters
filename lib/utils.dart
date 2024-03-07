@@ -42,7 +42,7 @@ class Receipt<T1> {
       tip: data?['tip'],
       total: data?['total'],
       resolvedPayers: List<String>.from(data?['resolvedPayers'] ?? []),
-      fronter: data?['fronter'] ?? "",
+      fronter: data?['fronter'],
     );
   }
 
