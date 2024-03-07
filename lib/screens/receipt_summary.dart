@@ -332,6 +332,15 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                     });
                   }
                 },
+                onTapOutside: (PointerDownEvent event) {
+                  if (selectedItems.isNotEmpty) {
+                    setState(() {
+                      tagPayer(payerController.text);
+                      onePayerTagged = true;
+                      tagging = true;
+                    });
+                  }
+                },
               ),
             ),
           )
