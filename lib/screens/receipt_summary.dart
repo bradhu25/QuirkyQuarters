@@ -45,6 +45,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
 
 
   void selectItem(int itemIndex) {
+    if (!tagging) return;
     setState(() {
       if (selectedItems.contains(itemIndex)) {
         selectedItems.remove(itemIndex);
