@@ -38,11 +38,11 @@ class Receipt<T1> {
         for (var entry in data?['entries'])
           ItemCostPayer.fromFirestore(entry, options),
       ],
-      tax: data?['tax'],
-      tip: data?['tip'],
-      total: data?['total'],
+      tax: data?['tax'] == null ? 0.0 : data?['tax'].toDouble(),
+      tip: data?['tip'] == null ? 0.0 : data?['tip'].toDouble(),
+      total: data?['total'].toDouble(),
       resolvedPayers: List<String>.from(data?['resolvedPayers'] ?? []),
-      fronter: data?['fronter'],
+      fronter: data?['fronter'] ?? "",
     );
   }
 
@@ -102,7 +102,7 @@ class ItemCostPayer<T1, T2, T3> {
   ) {
     return ItemCostPayer(
       item: entry['item'],
-      cost: entry['cost'],
+      cost: entry['cost'].toDouble(),
       payer: entry['payer'],
     );
   }

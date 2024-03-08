@@ -78,6 +78,15 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
         )
         .set(receipt)
         .onError((e, _) => print("Error writing document: $e"));
+
+    // New receipt was created and saved.
+    if (widget.receiptId == null) {
+      FirebaseFirestore.instance
+        .collection('receipts_per_user')
+        .doc('default_user')
+        .update({ 'receipts': FieldValue.arrayUnion([receiptId]) })
+        .onError((e, _) => print("Error updating document: $e"));
+    }
   }
 
   goToReceiptSummary() {
