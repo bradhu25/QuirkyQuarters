@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:quirky_quarters/screens/receipt_summary.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -418,28 +420,25 @@ Widget build(BuildContext context) {
           ),
         ),
       ),
-          bottomNavigationBar: BottomAppBar(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      goToReceiptSummary();
-                    },
-                    child: const Text('Save'),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.camera_alt_outlined),
-                    onPressed: _handleCameraPermissionAndNavigate,
-                  ),
-                ],
-              ),
-            ),
-          ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _handleCameraPermissionAndNavigate,
+        tooltip: 'Take Picture',
+        child: Icon(Icons.camera_alt_outlined),
       ),
-      
-    );
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  goToReceiptSummary();
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        ),
+      ),
+  );}
   }
-}
