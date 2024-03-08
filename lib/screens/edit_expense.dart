@@ -245,7 +245,7 @@ Widget build(BuildContext context) {
                     Expanded(
                       flex: 2,
                       child: Padding(
-                              padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
+                              padding: EdgeInsets.only(left: 6), // Align the label text with the TextField content
                               child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
                       ),
                     ),
@@ -374,14 +374,14 @@ Widget build(BuildContext context) {
                             child: Container(
                               width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                               child: TextField(
+                                keyboardType: TextInputType.number,
                                 controller: taxController,
                                 decoration: InputDecoration(
-                                  hintText: 'Tax',
+                                  hintText: 'Enter Tax',
                                   border: OutlineInputBorder(),
                                   isDense: true,
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                 ),
-                                style: Theme.of(context).textTheme.headlineSmall,
                               ),
                             ),
                           ),
@@ -397,14 +397,14 @@ Widget build(BuildContext context) {
                             child: Container(
                               width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                               child: TextField(
+                                keyboardType: TextInputType.number,
                                 controller: tipController,
                                 decoration: InputDecoration(
-                                  hintText: 'Tip',
+                                  hintText: 'Enter Tip',
                                   border: OutlineInputBorder(),
                                   isDense: true,
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                 ),
-                                style: Theme.of(context).textTheme.headlineSmall,
                               ),
                             ),
                           ),
