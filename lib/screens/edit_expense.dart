@@ -286,6 +286,7 @@ Widget build(BuildContext context) {
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 18.0),
                                 child: TextField(
+                                  keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                     border: OutlineInputBorder(), 
@@ -330,6 +331,7 @@ Widget build(BuildContext context) {
                             child: Padding(
                               padding: const EdgeInsets.only(right: 18.0),
                               child: TextField(
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   hintText: 'Enter Cost',
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
