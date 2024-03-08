@@ -305,7 +305,7 @@ Widget build(BuildContext context) {
                 ],
                 Row(
                   children: [
-                    SizedBox(width: 48), // remove-button-spaceholder for auto new entry line
+                    SizedBox(width: 50), // remove-button-spaceholder for auto new entry line
                     Expanded(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
