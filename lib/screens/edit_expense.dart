@@ -284,7 +284,7 @@ Widget build(BuildContext context) {
                             Expanded(
                               flex: 2,
                               child: Padding(
-                                padding: const EdgeInsets.only(right: 18.0),
+                                padding: const EdgeInsets.only(right: 36.0),
                                 child: TextField(
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
@@ -305,7 +305,11 @@ Widget build(BuildContext context) {
                 ],
                 Row(
                   children: [
-                    SizedBox(width: 50), // remove-button-spaceholder for auto new entry line
+                    IconButton(
+                      icon: Icon(Icons.remove_circle_outline, color: Colors.grey),
+                      onPressed: null,
+                    ),
+                    SizedBox(width: 10),
                     Expanded(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -329,7 +333,7 @@ Widget build(BuildContext context) {
                           Expanded(
                             flex: 2,
                             child: Padding(
-                              padding: const EdgeInsets.only(right: 18.0),
+                              padding: const EdgeInsets.only(right: 36.0),
                               child: TextField(
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
@@ -357,7 +361,7 @@ Widget build(BuildContext context) {
                 ),
                 SizedBox(height: 30),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10), // Keep padding for overall alignment
+                  padding: const EdgeInsets.symmetric(horizontal: 18), // Keep padding for overall alignment
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -388,7 +392,7 @@ Widget build(BuildContext context) {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text("Tip:", style: Theme.of(context).textTheme.headlineSmall),
-                          SizedBox(width: 10), // Space between label and field
+                          SizedBox(width: 12), // Space between label and field
                           Flexible(
                             child: Container(
                               width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
