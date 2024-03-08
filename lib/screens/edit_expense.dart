@@ -200,7 +200,6 @@ Widget build(BuildContext context) {
                 SizedBox(height: 30),
 
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end, // Aligns widgets at the bottom, useful if they have different heights
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
