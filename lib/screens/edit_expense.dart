@@ -184,7 +184,7 @@ Widget build(BuildContext context) {
             child: Column(
               children: [
                 SizedBox(height: 20,),
-                Container(
+                SizedBox(
                   width: 300,
                   height: Theme.of(context).textTheme.headlineLarge!.fontSize,
                   child: TextField(
@@ -198,95 +198,113 @@ Widget build(BuildContext context) {
                   ),
                 ),
                 SizedBox(height: 30),
-
                 Row(
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                        children: List.generate(itemControllers.length, (i) {
-                          bool isEditing = (i == itemControllers.length - 1);
-                          return isEditing
-                              ? SizedBox(width: 48) // remove button spaceholder for auto new entry line
-                              : IconButton(
-                                  icon: Icon(Icons.remove_circle_outline),
-                                  onPressed: () {
-                                    removeItemAndCost(i);
-                                  },
-                                );
-                        }),
-                    ),
-                    SizedBox(width: 10), // Provides spacing between the button and the text fields
+                    SizedBox(width: 48),
                     Expanded(
-                      flex: 2, 
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
-                            child: Text("Items", style: Theme.of(context).textTheme.headlineSmall),
-                          ),
-                          for (var i = 0; i < receipt.entries.length; i++) 
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                  border: OutlineInputBorder(), 
-                                ),
-                                controller: itemControllers[i],
-                                onTapOutside: (_) { editItem(i); },
-                                onSubmitted: (_) { editItem(i); },
-                              ),
-                            ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Enter Item',
-                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                border: OutlineInputBorder(), 
-                              ),
-                              controller: itemControllers.last,
-                              onTapOutside: (_) { addNewItemAndCost(); },
-                              onSubmitted: (_) { addNewItemAndCost(); },
-                            ),
-                          ),
-                        ],
+                      flex: 2,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
+                        child: Text("Items", style: Theme.of(context).textTheme.headlineSmall),
                       ),
                     ),
                     Expanded(
-                      flex: 2, 
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start
+                      flex: 2,
+                      child: Padding(
+                              padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
+                              child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
+                      ),
+                    ),
+                  ]
+                ),
+                // Dynamic List of Items
+                for (var i = 0; i < receipt.entries.length; i++) ...[
+                  Row(
+                    children: [
+                      IconButton(
+                          icon: Icon(Icons.remove_circle_outline),
+                          onPressed: () {
+                            removeItemAndCost(i);
+                          },
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                    border: OutlineInputBorder(), 
+                                  ),
+                                  controller: itemControllers[i],
+                                  onTapOutside: (_) { editItem(i); },
+                                  onSubmitted: (_) { editItem(i); },
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 18.0),
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                    border: OutlineInputBorder(), 
+                                  ),
+                                  controller: costControllers[i],
+                                  onTapOutside: (_) { editCost(i); },
+                                  onSubmitted: (_) { editCost(i); },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                Row(
+                  children: [
+                    SizedBox(width: 48), // remove-button-spaceholder for auto new entry line
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
-                            child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
-                          ),
-                          for (var i = 0; i < receipt.entries.length; i++) 
-                            Padding(
-                              padding: const EdgeInsets.only(right: 18.0),
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
                               child: TextField(
                                 decoration: InputDecoration(
+                                  hintText: 'Enter Item',
                                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                   border: OutlineInputBorder(), 
                                 ),
-                                controller: costControllers[i],
-                                onTapOutside: (_) { editCost(i); },
-                                onSubmitted: (_) { editCost(i); },
+                                controller: itemControllers.last,
+                                onTapOutside: (_) { addNewItemAndCost(); },
+                                onSubmitted: (_) { addNewItemAndCost(); },
                               ),
                             ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 18.0),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Enter Cost',
-                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                border: OutlineInputBorder(), 
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 18.0),
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Enter Cost',
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                  border: OutlineInputBorder(), 
+                                ),
+                                controller: costControllers.last,
+                                onTapOutside: (_){ addNewItemAndCost(); },
+                                onSubmitted: (_) { addNewItemAndCost(); },
                               ),
-                              controller: costControllers.last,
-                              onTapOutside: (_){ addNewItemAndCost(); },
-                              onSubmitted: (_) { addNewItemAndCost(); },
                             ),
                           ),
                         ],
@@ -294,7 +312,6 @@ Widget build(BuildContext context) {
                     ),
                   ],
                 ),
-
                 SizedBox(height: 30),
                 Divider(
                   color: Colors.grey, 
