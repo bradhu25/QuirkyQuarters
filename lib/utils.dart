@@ -8,6 +8,7 @@ class Receipt<T1> {
   double? tip;
   double total;
   List<String> resolvedPayers;
+  String fronter;
 
   Receipt(
     {required this.title, 
@@ -15,14 +16,16 @@ class Receipt<T1> {
     this.tax,
     this.tip,
     required this.total,
-    required this.resolvedPayers}
+    required this.resolvedPayers,
+    required this.fronter,}
     );
   
   Receipt.emptyReceipt() 
     : title = "Expense #1",
       entries = [],
       total = 0.00,
-      resolvedPayers = [];
+      resolvedPayers = [],
+      fronter = "";
 
   factory Receipt.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -35,13 +38,11 @@ class Receipt<T1> {
         for (var entry in data?['entries'])
           ItemCostPayer.fromFirestore(entry, options),
       ],
-      tax: data?['tax'],
-      tip: data?['tip'],
-      total: data?['total'],
-      resolvedPayers: [
-        for (var entry in data?['entries'])
-          entry.toString(),
-      ],
+      tax: data?['tax'] == null ? 0.0 : data?['tax'].toDouble(),
+      tip: data?['tip'] == null ? 0.0 : data?['tip'].toDouble(),
+      total: data?['total'].toDouble(),
+      resolvedPayers: List<String>.from(data?['resolvedPayers'] ?? []),
+      fronter: data?['fronter'] ?? "",
     );
   }
 
@@ -56,6 +57,7 @@ class Receipt<T1> {
       "tip": tip,
       "total": total,
       "resolvedPayers": resolvedPayers,
+      "fronter": fronter,
     };
   }
 
@@ -100,7 +102,7 @@ class ItemCostPayer<T1, T2, T3> {
   ) {
     return ItemCostPayer(
       item: entry['item'],
-      cost: entry['cost'],
+      cost: entry['cost'].toDouble(),
       payer: entry['payer'],
     );
   }

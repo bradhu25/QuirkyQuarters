@@ -19,6 +19,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   String receiptId = generateCode();
 
   final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
+  final TextEditingController fronterController = TextEditingController(); // for the person who pays the whole bill
   List<TextEditingController> itemControllers = [TextEditingController()];
   List<TextEditingController> costControllers = [TextEditingController()];
   final TextEditingController taxController = TextEditingController();
@@ -39,6 +40,12 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
           receipt = fetchReceipt;
           List<TextEditingController> existingItems = [];
           List<TextEditingController> existingCosts = [];
+          // Set the fronter and title from the fetched receipt
+          fronterController.text = receipt.fronter;
+          expenseTitleController.text = receipt.title;
+          taxController.text = receipt.tax != null ? receipt.tax!.toStringAsFixed(2) : "";
+          tipController.text = receipt.tip != null ? receipt.tip!.toStringAsFixed(2) : "";
+
           
           for (var entry in receipt.entries) {
             existingItems.add(TextEditingController(text: entry.item));
@@ -53,8 +60,10 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   }
 
   addExpensesToDatabase() {
+    var fronter = fronterController.text;
     var tax = double.tryParse(taxController.text);
     var tip = double.tryParse(tipController.text);
+    receipt.fronter = fronter;
     receipt.tax = tax;
     receipt.tip = tip;
     receipt.title = expenseTitleController.text;
@@ -69,12 +78,26 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
         )
         .set(receipt)
         .onError((e, _) => print("Error writing document: $e"));
+
+    // New receipt was created and saved.
+    if (widget.receiptId == null) {
+      FirebaseFirestore.instance
+        .collection('receipts_per_user')
+        .doc('default_user')
+        .update({ 'receipts': FieldValue.arrayUnion([receiptId]) })
+        .onError((e, _) => print("Error updating document: $e"));
+    }
   }
 
   goToReceiptSummary() {
     if (receipt.entries.isEmpty) {
       return;
     }
+
+    if (fronterController.text == "") {
+      return;
+    }
+
     addExpensesToDatabase();
     Navigator.push(
       context,
@@ -194,6 +217,17 @@ Widget build(BuildContext context) {
                     decoration: InputDecoration(
                       hintText: 'Expense Title',
                       border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                Container(
+                  width: 300,
+                  child: TextField(
+                    controller: fronterController,
+                    decoration: InputDecoration(
+                      labelText: 'Fronter',
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
