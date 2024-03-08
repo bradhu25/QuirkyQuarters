@@ -12,16 +12,16 @@ class ViewReceiptsRoute extends StatefulWidget {
 }
 
 class _ViewReceiptsRouteState extends State<ViewReceiptsRoute> {
-  
+  Future<void>? waitToFetchReceips;  
   Map<String, String> userReceipts = {};
 
   @override
   void initState() {
     super.initState();
-    initStateAsync();
+    waitToFetchReceips = initStateAsync();
   }
 
-  void initStateAsync() async {
+  Future<void> initStateAsync() async {
     
     try {
       // Load receipts belonging to user.
@@ -31,15 +31,17 @@ class _ViewReceiptsRouteState extends State<ViewReceiptsRoute> {
         .get();
 
       if(receiptsPerUser.data() != null) {
+        Map<String, String> fetchingTitles = {};
         for (var receiptId in receiptsPerUser.data()?['receipts']) {
           // Load receipt data to fetch expense title.
           Receipt? receipt = await fetchReceiptData(receiptId.toString());
           if (receipt != null) {
-            setState(() {
-              userReceipts[receiptId.toString()] = receipt.title;
-            });
+            fetchingTitles[receiptId.toString()] = receipt.title;
           }
         }
+        setState(() {
+          userReceipts = fetchingTitles;
+        });
       } 
     } catch (e) {
       print(e);
@@ -62,20 +64,30 @@ class _ViewReceiptsRouteState extends State<ViewReceiptsRoute> {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          ...userReceipts.entries.map((receipt) {
-            return TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ReceiptSummaryRoute(receiptId: receipt.key)),
-                      );
-                    },
-                    child: Text(receipt.value),
-                  );
-          })
-        ],
+      body: 
+        FutureBuilder<void>(
+        future: waitToFetchReceips,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return ListView(
+              children: [
+                ...userReceipts.entries.map((receipt) {
+                  return TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ReceiptSummaryRoute(receiptId: receipt.key)),
+                            );
+                          },
+                          child: Text(receipt.value),
+                        );
+                })
+              ],
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
