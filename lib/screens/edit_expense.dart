@@ -18,7 +18,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   Receipt receipt = Receipt.emptyReceipt();
   String receiptId = generateCode();
 
-  final TextEditingController expenseTitleController = TextEditingController(text: "Untitled Expense");
+  final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
+  final TextEditingController fronterController = TextEditingController(); // for the person who pays the whole bill
   List<TextEditingController> itemControllers = [TextEditingController()];
   List<TextEditingController> costControllers = [TextEditingController()];
   final TextEditingController taxController = TextEditingController();
@@ -39,6 +40,12 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
           receipt = fetchReceipt;
           List<TextEditingController> existingItems = [];
           List<TextEditingController> existingCosts = [];
+          // Set the fronter and title from the fetched receipt
+          fronterController.text = receipt.fronter;
+          expenseTitleController.text = receipt.title;
+          taxController.text = receipt.tax != null ? receipt.tax!.toStringAsFixed(2) : "";
+          tipController.text = receipt.tip != null ? receipt.tip!.toStringAsFixed(2) : "";
+
           
           for (var entry in receipt.entries) {
             existingItems.add(TextEditingController(text: entry.item));
@@ -53,8 +60,10 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   }
 
   addExpensesToDatabase() {
+    var fronter = fronterController.text;
     var tax = double.tryParse(taxController.text);
     var tip = double.tryParse(tipController.text);
+    receipt.fronter = fronter;
     receipt.tax = tax;
     receipt.tip = tip;
     receipt.title = expenseTitleController.text;
@@ -84,6 +93,11 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     if (receipt.entries.isEmpty) {
       return;
     }
+
+    if (fronterController.text == "") {
+      return;
+    }
+
     addExpensesToDatabase();
     Navigator.push(
       context,
@@ -207,6 +221,17 @@ Widget build(BuildContext context) {
                   ),
                 ),
                 SizedBox(height: 30),
+                Container(
+                  width: 300,
+                  child: TextField(
+                    controller: fronterController,
+                    decoration: InputDecoration(
+                      labelText: 'Fronter',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end, // Aligns widgets at the bottom, useful if they have different heights
                   children: [
@@ -270,6 +295,7 @@ Widget build(BuildContext context) {
                           ),
                           for (var i = 0; i < receipt.entries.length; i++) 
                             TextField(
+                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                 border: OutlineInputBorder(), 
