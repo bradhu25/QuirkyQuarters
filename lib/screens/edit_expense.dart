@@ -289,14 +289,20 @@ Widget build(BuildContext context) {
                                 flex: 2,
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
-                                  child: TextField(
+                                  child: TextFormField(
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter an Item';
+                                      }
+                                      return null;
+                                    },
                                     controller: itemControllers[i],
                                     onTapOutside: (_) { editItem(i); },
-                                    onSubmitted: (_) { editItem(i); },
+                                    onFieldSubmitted: (_) { editItem(i); },
                                   ),
                                 ),
                               ),
@@ -304,15 +310,21 @@ Widget build(BuildContext context) {
                                 flex: 2,
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 36.0),
-                                  child: TextField(
+                                  child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter an Cost';
+                                      }
+                                      return null;
+                                    },
                                     controller: costControllers[i],
                                     onTapOutside: (_) { editCost(i); },
-                                    onSubmitted: (_) { editCost(i); },
+                                    onFieldSubmitted: (_) { editCost(i); },
                                   ),
                                 ),
                               ),
