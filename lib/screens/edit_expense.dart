@@ -17,6 +17,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
 
   Receipt receipt = Receipt.emptyReceipt();
   String receiptId = generateCode();
+  final formKey = GlobalKey<FormState>();
 
   final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
   final TextEditingController fronterController = TextEditingController(); // for the person who pays the whole bill
@@ -29,6 +30,21 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   void initState() {
     super.initState();
     initStateAsync();
+  }
+
+  @override
+  void dispose() {
+    expenseTitleController.dispose();
+    fronterController.dispose();
+    taxController.dispose();
+    tipController.dispose();
+    for (final controller in itemControllers) {
+      controller.dispose();
+    }
+    for (final controller in costControllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   void initStateAsync() async {
@@ -90,14 +106,9 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   }
 
   goToReceiptSummary() {
-    if (receipt.entries.isEmpty) {
+    if (formKey.currentState?.validate() == false) {
       return;
     }
-
-    if (fronterController.text == "") {
-      return;
-    }
-
     addExpensesToDatabase();
     Navigator.push(
       context,
@@ -198,219 +209,278 @@ Widget build(BuildContext context) {
       appBar: AppBar(
         title: const Text('Edit Expense'),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: DefaultTextStyle(
-            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                  height: 2
-                ),
-            child: Column(
-              children: [
-                SizedBox(height: 20,),
-                Container(
-                  width: 300,
-                  height: Theme.of(context).textTheme.headlineLarge!.fontSize,
-                  child: TextField(
-                    controller: expenseTitleController,
-                    style: Theme.of(context).textTheme.headlineLarge,
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      hintText: 'Expense Title',
-                      border: InputBorder.none,
+      body: Form(
+        key: formKey,
+        child: SingleChildScrollView(
+          child: Center(
+            child: DefaultTextStyle(
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    height: 2
+                  ),
+              child: Column(
+                children: [
+                  SizedBox(height: 20,),
+                  SizedBox(
+                    width: 300,
+                    height: Theme.of(context).textTheme.headlineLarge!.fontSize,
+                    child: TextFormField(
+                      controller: expenseTitleController,
+                      style: Theme.of(context).textTheme.headlineLarge,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        hintText: 'Expense Title',
+                        border: InputBorder.none,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 30),
-                Container(
-                  width: 300,
-                  child: TextField(
-                    controller: fronterController,
-                    decoration: InputDecoration(
-                      labelText: 'Fronter',
-                      border: OutlineInputBorder(),
+                  SizedBox(height: 30),
+                  Container(
+                    width: 300,
+                    child: TextFormField(
+                      controller: fronterController,
+                      decoration: InputDecoration(
+                        labelText: 'Fronter',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a Fronter';
+                      }
+                      return null;
+                      },
                     ),
                   ),
-                ),
-                SizedBox(height: 30),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end, // Aligns widgets at the bottom, useful if they have different heights
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                  SizedBox(height: 30),
+                  Row(
                     children: [
-                      for (var i = 0; i < receipt.entries.length; i++)
-                             IconButton(
-                              icon: Icon(Icons.remove_circle_outline),
-                              onPressed: () {
-                                 removeItemAndCost(i);
-                              },
-                             ),
+                      SizedBox(width: 48),
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
+                          child: Text("Items", style: Theme.of(context).textTheme.headlineSmall),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                                padding: EdgeInsets.only(left: 6), // Align the label text with the TextField content
+                                child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
+                        ),
+                      ),
+                    ]
+                  ),
+                  // Dynamic List of Items
+                  for (var i = 0; i < receipt.entries.length; i++) ...[
+                    Row(
+                      children: [
+                        IconButton(
+                            icon: Icon(Icons.remove_circle_outline),
+                            onPressed: () {
+                              removeItemAndCost(i);
+                            },
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                      border: OutlineInputBorder(), 
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter an Item';
+                                      }
+                                      return null;
+                                    },
+                                    controller: itemControllers[i],
+                                    onTapOutside: (_) { editItem(i); },
+                                    onFieldSubmitted: (_) { editItem(i); },
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 36.0),
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                      border: OutlineInputBorder(), 
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter an Cost';
+                                      }
+                                      return null;
+                                    },
+                                    controller: costControllers[i],
+                                    onTapOutside: (_) { editCost(i); },
+                                    onFieldSubmitted: (_) { editCost(i); },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                    SizedBox(width: 10), // Provides spacing between the button and the text fields
-                    Expanded(
-                      flex: 2, 
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
-                            child: Text("Item", style: Theme.of(context).textTheme.headlineSmall),
-                          ),
-                          for (var i = 0; i < receipt.entries.length; i++) 
-                            TextField(
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                border: OutlineInputBorder(), 
-                              ),
-                              controller: itemControllers[i],
-                              onTapOutside: (_) { editItem(i); },
-                              onSubmitted: (_) { editItem(i); },
-                            ),
-                          Container(
-                            margin: EdgeInsets.only(right: 10), 
-                            constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Enter Item',
-                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                border: OutlineInputBorder(), 
-                              ),
-                              controller: itemControllers.last,
-                              onTapOutside: (_) { addNewItemAndCost(); },
-                              onSubmitted: (_) { addNewItemAndCost(); },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2, 
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 12), // Align the label text with the TextField content
-                            child: Text("Cost", style: Theme.of(context).textTheme.headlineSmall),
-                          ),
-                          for (var i = 0; i < receipt.entries.length; i++) 
-                            TextField(
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                border: OutlineInputBorder(), 
-                              ),
-                              controller: costControllers[i],
-                              onTapOutside: (_) { editCost(i); },
-                              onSubmitted: (_) { editCost(i); },
-                            ),
-                          Container(
-                            margin: EdgeInsets.only(right: 10), // Added to prevent the box from touching the screen's side
-                            constraints: BoxConstraints(maxWidth: 150), // Smaller width for the text box
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Enter Cost',
-                                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                border: OutlineInputBorder(), // Adds a border around the TextField
-                              ),
-                              controller: costControllers.last,
-                              onTapOutside: (_){ addNewItemAndCost(); },
-                              onSubmitted: (_){ addNewItemAndCost(); },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
-                ),
-                SizedBox(height: 30),
-                Divider(
-                  color: Colors.grey, 
-                  thickness: 1, 
-                  indent: 20, 
-                  endIndent: 20, 
-                ),
-                SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10), // Keep padding for overall alignment
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text("Tax:", style: Theme.of(context).textTheme.headlineSmall),
-                          SizedBox(width: 10), // Space between label and field
-                          Flexible(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
-                              child: TextField(
-                                controller: taxController,
-                                decoration: InputDecoration(
-                                  hintText: 'Tax',
-                                  border: OutlineInputBorder(),
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                                ),
-                                style: Theme.of(context).textTheme.headlineSmall,
-                              ),
-                            ),
-                          ),
-                        ],
+                      IconButton(
+                        icon: Icon(Icons.remove_circle_outline, color: Colors.grey),
+                        onPressed: null,
                       ),
-                      SizedBox(height: 15), // Space between Tax and Tip rows
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text("Tip:", style: Theme.of(context).textTheme.headlineSmall),
-                          SizedBox(width: 10), // Space between label and field
-                          Flexible(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
-                              child: TextField(
-                                controller: tipController,
-                                decoration: InputDecoration(
-                                  hintText: 'Tip',
-                                  border: OutlineInputBorder(),
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: TextFormField(
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter Item',
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                    border: OutlineInputBorder(), 
+                                  ),
+                                  validator: (_) {
+                                    if (receipt.entries.isEmpty) {
+                                      return 'Please enter an Item';
+                                    }
+                                    return null;
+                                  },
+                                  controller: itemControllers.last,
+                                  onTapOutside: (_) { addNewItemAndCost(); },
+                                  onFieldSubmitted: (_) { addNewItemAndCost(); },
                                 ),
-                                style: Theme.of(context).textTheme.headlineSmall,
                               ),
                             ),
-                          ),
-                        ],
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 36.0),
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter Cost',
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                    border: OutlineInputBorder(), 
+                                  ),
+                                  validator: (_) {
+                                    if (receipt.entries.isEmpty) {
+                                      return 'Please enter a Cost';
+                                    }
+                                    return null;
+                                  },
+                                  controller: costControllers.last,
+                                  onTapOutside: (_){ addNewItemAndCost(); },
+                                  onFieldSubmitted: (_) { addNewItemAndCost(); },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-          bottomNavigationBar: BottomAppBar(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      goToReceiptSummary();
-                    },
-                    child: const Text('Save'),
+                  SizedBox(height: 30),
+                  Divider(
+                    color: Colors.grey, 
+                    thickness: 1, 
+                    indent: 20, 
+                    endIndent: 20, 
                   ),
-                  IconButton(
-                    icon: Icon(Icons.camera_alt_outlined),
-                    onPressed: _handleCameraPermissionAndNavigate,
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18), // Keep padding for overall alignment
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text("Tax:", style: Theme.of(context).textTheme.headlineSmall),
+                            SizedBox(width: 10), // Space between label and field
+                            Flexible(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  controller: taxController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter Tax',
+                                    border: OutlineInputBorder(),
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 15), // Space between Tax and Tip rows
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text("Tip:", style: Theme.of(context).textTheme.headlineSmall),
+                            SizedBox(width: 12), // Space between label and field
+                            Flexible(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  controller: tipController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Enter Tip',
+                                    border: OutlineInputBorder(),
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
           ),
+        ),
       ),
-      
-    );
+      floatingActionButton: FloatingActionButton(
+        onPressed: _handleCameraPermissionAndNavigate,
+        tooltip: 'Take Picture',
+        child: Icon(Icons.camera_alt_outlined),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  goToReceiptSummary();
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        ),
+      ),
+  );}
   }
-}
