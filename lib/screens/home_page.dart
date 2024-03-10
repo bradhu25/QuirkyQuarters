@@ -73,14 +73,16 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Quirky Quarters'),
         automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.white, 
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 20.0),
-              child: Image.asset('assets/logo.png', width: 150, height: 150), 
+              padding: const EdgeInsets.only(bottom: 25.0),
+              child: Image.asset('assets/logo.png', width: 200, height: 200), 
             ),
             ElevatedButton.icon(
               icon: Icon(Icons.receipt), 
@@ -99,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 15),
             FractionallySizedBox(
               widthFactor: 1,
               child: Column(
@@ -148,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 15),
             ElevatedButton.icon(
               icon: Icon(Icons.visibility), 
               label: Text('View Receipts'),
