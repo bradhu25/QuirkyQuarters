@@ -58,71 +58,120 @@ class _HomePageState extends State<HomePage> {
   //TODO: [UI] Change font, background, and buttons to appear more aesthetically pleasing
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+    onTap: () {
+      // Close the keyboard if the user taps outside of the TextField
+      FocusScope.of(context).requestFocus(new FocusNode());
+      // Revert back to showing the "Join Receipt" button if in joiningReceipt mode
+      if (joiningReceipt) {
+        setState(() {
+          joiningReceipt = false;
+        });
+      }
+    },
+    child: Scaffold(
       appBar: AppBar(
         title: const Text('Quirky Quarters'),
         automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.white, 
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              child: const Text('Start Receipt'),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 25.0),
+              child: Image.asset('assets/logo.png', width: 200, height: 200), 
+            ),
+            ElevatedButton.icon(
+              icon: Icon(Icons.receipt), 
+              label: Text('Start Receipt'),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const EditExpenseRoute()),
                 );
               },
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(240, 60),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                textStyle: TextStyle(
+                  fontSize: 20, // This increases the font size
+                ),
+              ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 15),
             FractionallySizedBox(
-              widthFactor: .35,
+              widthFactor: 1,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  joiningReceipt ? 
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            controller: codeController,
-                            decoration: InputDecoration(
-                              labelText: 'Enter Receipt Code',
-                              errorText: errorMessage,
+                  if (joiningReceipt) 
+                    Container(
+                      width: 240,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              keyboardType: TextInputType.number,
+                              controller: codeController,
+                              decoration: InputDecoration(
+                                labelText: 'Enter Receipt Code',
+                                errorText: errorMessage,
+                              ),
+                              onTapOutside: (_) async { await submitCode(); },
+                              onSubmitted: (_) async { await submitCode(); },
                             ),
-                            onTapOutside: (_) async { await submitCode(); },
-                            onSubmitted: (_) async { await submitCode(); },
+                          ),
+                          IconButton(
+                            onPressed: () async { await submitCode(); },
+                            icon: Icon(Icons.arrow_forward_ios),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (!joiningReceipt)
+                    Container(
+                      width: 240,
+                      child: ElevatedButton.icon(
+                        icon: Icon(Icons.input), 
+                        label: Text('Join Receipt'),
+                        onPressed: () { setState(() { joiningReceipt = true; }); },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(240, 60),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          textStyle: TextStyle(
+                            fontSize: 20, // This increases the font size
                           ),
                         ),
-                        IconButton(
-                          onPressed: () async { await submitCode(); },
-                          icon: Icon(Icons.arrow_forward_ios),
-                        ),
-                      ]
-                    ) : 
-                    ElevatedButton(
-                      child: const Text('Join Receipt'),
-                      onPressed: () { setState(() { joiningReceipt = true; }); },
+                      ),
                     ),
-                ]
+                ],
               ),
             ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              child: const Text('View Receipts'),
+            SizedBox(height: 15),
+            ElevatedButton.icon(
+              icon: Icon(Icons.visibility), 
+              label: Text('View Receipts'),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ViewReceiptsRoute()),
                 );
               },
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(240, 60),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                textStyle: TextStyle(
+                  fontSize: 20, // This increases the font size
+                ),
+              ),
             ),
-          ]
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
