@@ -15,13 +15,13 @@ runApp(MaterialApp( // routes not const
     title: 'Quirky Quarters',
     theme: ThemeData(
       colorScheme: ColorScheme.light(
-        primary: Colors.teal[300]!, // A lighter shade of teal as the primary color
-        onPrimary: Colors.white, // For text/icons on top of the primary color
-        secondary: Colors.cyan[200]!, // A lighter shade of cyan for the secondary color
-        onSecondary: Colors.black, // For text/icons on top of the secondary color
+        primary: Colors.teal[300]!,
+        onPrimary: Colors.white,
+        secondary: Colors.cyan[200]!,
+        onSecondary: Colors.black,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.teal[300], // Use the primary color from the color scheme
+        backgroundColor: Colors.teal[300],
         iconTheme: IconThemeData(color: Colors.white), // Icon color in the app bar
         titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
       ),
