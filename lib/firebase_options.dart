@@ -17,15 +17,24 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return android;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for android - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,39 +52,12 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAffwgAC2PJlgBH4CX8qjeQktU6b2-O-Ns',
-    appId: '1:961462713071:web:1eb7dbf2f021691d58f91a',
-    messagingSenderId: '961462713071',
-    projectId: 'quirky-quarters',
-    authDomain: 'quirky-quarters.firebaseapp.com',
-    storageBucket: 'quirky-quarters.appspot.com',
-    measurementId: 'G-8VPGQHGS33',
-  );
-
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDuQl0rzVxig2SpPKvJdOsQzzxm8tkZ_a0',
-    appId: '1:961462713071:android:750a71536213d44558f91a',
-    messagingSenderId: '961462713071',
-    projectId: 'quirky-quarters',
-    storageBucket: 'quirky-quarters.appspot.com',
-  );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAY_qjU50VcfwPQYVRxN4r1rLi3FuR4cyM',
     appId: '1:961462713071:ios:26f4842f3ac1542c58f91a',
     messagingSenderId: '961462713071',
     projectId: 'quirky-quarters',
     storageBucket: 'quirky-quarters.appspot.com',
-    iosBundleId: 'com.example.QuirkyQuarters',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAY_qjU50VcfwPQYVRxN4r1rLi3FuR4cyM',
-    appId: '1:961462713071:ios:03cf728b6517571e58f91a',
-    messagingSenderId: '961462713071',
-    projectId: 'quirky-quarters',
-    storageBucket: 'quirky-quarters.appspot.com',
-    iosBundleId: 'com.example.namerApp.RunnerTests',
+    iosBundleId: 'com.example.namerApp',
   );
 }
