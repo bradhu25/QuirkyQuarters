@@ -219,17 +219,16 @@ Widget build(BuildContext context) {
                   ),
               child: Column(
                 children: [
-                  SizedBox(height: 20,),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: 300,
-                    height: Theme.of(context).textTheme.headlineLarge!.fontSize,
                     child: TextFormField(
                       controller: expenseTitleController,
                       style: Theme.of(context).textTheme.headlineLarge,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
+                        labelText: 'Expense Title',
                         hintText: 'Expense Title',
-                        border: InputBorder.none,
                       ),
                     ),
                   ),
