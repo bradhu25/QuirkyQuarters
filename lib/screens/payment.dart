@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'home_page.dart';
 import 'package:quirky_quarters/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class PaymentScreen extends StatefulWidget {
@@ -84,6 +85,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
           ),
         )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _launchVenmo,
+        tooltip: 'Pay with Venmo',
+        child: Icon(Icons.payment),
       ),
     );
   }
@@ -206,4 +212,29 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     return payerTotal;
   }
+  
+  void _launchVenmo() async {
+    final Uri venmoUrl = Uri.parse('https://venmo.com/'); 
+    if (await canLaunchUrl(venmoUrl)) {
+      await launchUrl(venmoUrl);
+    } else {
+      throw 'Could not launch $venmoUrl';
+    }
+  }
+
+  // A way to launch to a pre filled pay/charge page with username and amount pre filled. 
+  // Requires app so need to test on physical device
+  // void _launchVenmo(double amountOwed) async {
+  //   const String recipientUsername = 'brad'; // Replace with actual username
+  //   final Uri venmoUrl = Uri.parse(
+  //     'venmo://paycharge?txn=pay&recipients=$recipientUsername&amount=$amountOwed'
+  //   );
+
+  //   if (await canLaunchUrl(venmoUrl)) {
+  //     await launchUrl(venmoUrl);
+  //   } else {
+  //     throw 'Could not launch Venmo';
+  //   }
+  // }
+
 }
