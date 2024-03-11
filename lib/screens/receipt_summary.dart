@@ -75,7 +75,6 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Your Code"),
-          // subtitle: Text("Share the following code to allow others to join your receipt:"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,14 +89,13 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // Center the row content
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                      // Use Expanded to ensure the SelectableText is in the center
                       child: SelectableText(
                         code,
-                        textAlign: TextAlign.center, // Center the text inside SelectableText
-                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold), // Make text bold
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                       ),
                     ),
                     IconButton(
@@ -113,19 +111,6 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                   ],
                 ),
               ),
-              // ListTile(
-              //   title: SelectableText(code),
-              //   trailing: IconButton(
-              //     icon: const Icon(Icons.copy),
-              //     onPressed: () {
-              //       Clipboard.setData(ClipboardData(text: code));
-              //       Navigator.of(context).pop();
-              //       ScaffoldMessenger.of(context).showSnackBar(
-              //         const SnackBar(content: Text('Code copied to clipboard')),
-              //       );
-              //     },
-              //   )
-              // ),
             ],
           ),
           actions: <Widget>[
