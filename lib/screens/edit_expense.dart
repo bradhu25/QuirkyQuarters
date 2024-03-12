@@ -19,7 +19,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   String receiptId = generateCode();
   final formKey = GlobalKey<FormState>();
 
-  final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
+  final TextEditingController expenseTitleController = TextEditingController();
   final TextEditingController fronterController = TextEditingController(); // for the person who pays the whole bill
   List<TextEditingController> itemControllers = [TextEditingController()];
   List<TextEditingController> costControllers = [TextEditingController()];
@@ -230,6 +230,12 @@ Widget build(BuildContext context) {
                         labelText: 'Expense Title',
                         hintText: 'Expense Title',
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a title';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   SizedBox(height: 30),
@@ -242,10 +248,10 @@ Widget build(BuildContext context) {
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a Fronter';
-                      }
-                      return null;
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a Fronter';
+                        }
+                        return null;
                       },
                     ),
                   ),
