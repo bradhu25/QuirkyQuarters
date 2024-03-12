@@ -6,6 +6,7 @@ import 'package:quirky_quarters/screens/split_summary.dart';
 import 'package:quirky_quarters/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'home_page.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ReceiptSummaryRoute extends StatefulWidget {
   final String receiptId;
@@ -74,13 +75,49 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Your Code"),
-          content: Text(code),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                child: Text(
+                  "Share the following code to allow others to join your receipt:",
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: SelectableText(
+                        code,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.copy),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: code));
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Code copied to clipboard')),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
           actions: <Widget>[
             TextButton(
-              child: Text("Copy"),
+              child: Text("Share"),
               onPressed: () {
-                Clipboard.setData(ClipboardData(text: code));
-                Navigator.of(context).pop(); 
+                Share.share('Join ${receipt.fronter}\'s Quirky Quarters receipt with this code: $code'); // Triggers the share dialog
               },
             ),
             TextButton(
@@ -176,6 +213,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                   ),
             child: Column(
               children: [
+                SizedBox(height: 20,),
                 Row(
                   children: [
                     Expanded( 
@@ -204,6 +242,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                     ),
                   ],
                 ),
+                SizedBox(height: 10,),
                 // TODO: [DEV] Load expense title in from Firebase
                 Column(
                   children: [
@@ -256,16 +295,16 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                                         flex: 3,
                                         child: Padding(
                                           padding: EdgeInsets.only(left: 12), 
-                                          child: Text(receipt.entries[i].item),
+                                          child: Text(receipt.entries[i].item, style: TextStyle(fontSize: 20)),
                                         ),
                                       ),
                                       Expanded(
                                         flex: 2,
-                                        child: Text("\$${receipt.entries[i].cost.toStringAsFixed(2)}"),
+                                        child: Text("\$${receipt.entries[i].cost.toStringAsFixed(2)}", style: TextStyle(fontSize: 20)),
                                       ),
                                       Expanded(
                                         flex: 2,
-                                        child: Text(receipt.entries[i].payer ?? ""),
+                                        child: Text(receipt.entries[i].payer ?? "",  style: TextStyle(fontSize: 20)),
                                       ),
                                     ],
                                   ),

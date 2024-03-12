@@ -63,7 +63,10 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
       return Card(
         child: ExpansionTile(
           title: Text(payer.key),
-          subtitle: Text('Total: \$${payerTotal.toStringAsFixed(2)}'),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Text('Total: \$${payerTotal.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold),),
+          ),
           children: 
             [  
             ...payer.value.map((entry) {

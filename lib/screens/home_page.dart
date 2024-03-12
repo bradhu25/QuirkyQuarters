@@ -73,17 +73,12 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Quirky Quarters'),
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
       ),
-      backgroundColor: Colors.white, 
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 25.0),
-              child: Image.asset('assets/logo.png', width: 200, height: 200), 
-            ),
+            Image.asset('assets/logo.png', width: 250, height: 250,), 
             ElevatedButton.icon(
               icon: Icon(Icons.receipt), 
               label: Text('Start Receipt'),
