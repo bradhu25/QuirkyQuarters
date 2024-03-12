@@ -30,10 +30,12 @@ class _ViewReceiptsRouteState extends State<ViewReceiptsRoute> {
         .doc('default_user')
         .get();
 
-      if(receiptsPerUser.data() != null) {
+      if(receiptsPerUser.data() != null && receiptsPerUser.data()?['receipts'] != null) {
         Map<String, String> fetchingTitles = {};
-        for (var receiptId in receiptsPerUser.data()?['receipts']) {
+        // Fetch receipts in reverse order so they appear in order of recency.
+        for (int i = receiptsPerUser.data()!['receipts'].length - 1; i > -1; i--) {
           // Load receipt data to fetch expense title.
+          var receiptId = receiptsPerUser.data()!['receipts'][i];
           Receipt? receipt = await fetchReceiptData(receiptId.toString());
           if (receipt != null) {
             fetchingTitles[receiptId.toString()] = receipt.title;
