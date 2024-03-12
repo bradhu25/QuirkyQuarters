@@ -300,7 +300,10 @@ Widget build(BuildContext context) {
                                       return null;
                                     },
                                     controller: itemControllers[i],
-                                    onTapOutside: (_) { editItem(i); },
+                                    onTapOutside: (_) { 
+                                      FocusScope.of(context).unfocus();
+                                      editItem(i);
+                                    },
                                     onFieldSubmitted: (_) { editItem(i); },
                                   ),
                                 ),
@@ -322,7 +325,10 @@ Widget build(BuildContext context) {
                                       return null;
                                     },
                                     controller: costControllers[i],
-                                    onTapOutside: (_) { editCost(i); },
+                                    onTapOutside: (_) { 
+                                      FocusScope.of(context).unfocus();
+                                      editCost(i);
+                                    },
                                     onFieldSubmitted: (_) { editCost(i); },
                                   ),
                                 ),
@@ -361,7 +367,10 @@ Widget build(BuildContext context) {
                                     return null;
                                   },
                                   controller: itemControllers.last,
-                                  onTapOutside: (_) { addNewItemAndCost(); },
+                                  onTapOutside: (_) { 
+                                    FocusScope.of(context).unfocus();
+                                    addNewItemAndCost();
+                                  },
                                   onFieldSubmitted: (_) { addNewItemAndCost(); },
                                 ),
                               ),
@@ -384,7 +393,10 @@ Widget build(BuildContext context) {
                                     return null;
                                   },
                                   controller: costControllers.last,
-                                  onTapOutside: (_){ addNewItemAndCost(); },
+                                  onTapOutside: (_){ 
+                                    FocusScope.of(context).unfocus();
+                                    addNewItemAndCost();
+                                  },
                                   onFieldSubmitted: (_) { addNewItemAndCost(); },
                                 ),
                               ),
