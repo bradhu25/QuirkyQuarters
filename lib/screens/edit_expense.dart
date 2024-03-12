@@ -310,7 +310,7 @@ Widget build(BuildContext context) {
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 36.0),
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
@@ -371,7 +371,7 @@ Widget build(BuildContext context) {
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 36.0),
                                 child: TextFormField(
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   decoration: InputDecoration(
                                     hintText: 'Enter Cost',
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
@@ -416,7 +416,7 @@ Widget build(BuildContext context) {
                               child: Container(
                                 width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                                 child: TextFormField(
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   controller: taxController,
                                   decoration: InputDecoration(
                                     hintText: 'Enter Tax',
@@ -439,7 +439,7 @@ Widget build(BuildContext context) {
                               child: Container(
                                 width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                                 child: TextFormField(
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   controller: tipController,
                                   decoration: InputDecoration(
                                     hintText: 'Enter Tip',
