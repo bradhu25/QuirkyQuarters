@@ -61,12 +61,15 @@ class Receipt<T1> {
     };
   }
 
-  void duplicateEntry(int index, int numDivide) {
+  void divideEntry(int index, int numDivide) {
     if (index < 0 || index >= entries.length || numDivide < 1) return;
     
     ItemCostPayer itemToDivide = entries[index];
+    itemToDivide.cost /= numDivide;
     for (int i = 0; i < numDivide - 1; i++) {
-      entries.insert(index, ItemCostPayer.copy(itemToDivide));
+      ItemCostPayer newEntry = ItemCostPayer.copy(itemToDivide);
+      newEntry.payer = null;
+      entries.insert(index, newEntry);
     }
   }
 
