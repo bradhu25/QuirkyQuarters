@@ -230,6 +230,9 @@ Widget build(BuildContext context) {
                         labelText: 'Expense Title',
                         hintText: 'Expense Title',
                       ),
+                      onChanged: (value) {
+                        formKey.currentState?.validate();
+                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a title';
@@ -247,6 +250,9 @@ Widget build(BuildContext context) {
                         labelText: 'Fronter',
                         border: OutlineInputBorder(),
                       ),
+                      onChanged: (value) {
+                        formKey.currentState?.validate();
+                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a Fronter';
@@ -299,6 +305,9 @@ Widget build(BuildContext context) {
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
                                     ),
+                                    onChanged: (value) {
+                                      formKey.currentState?.validate();
+                                    },
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter an Item';
@@ -324,6 +333,9 @@ Widget build(BuildContext context) {
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
                                     ),
+                                    onChanged: (value) {
+                                      formKey.currentState?.validate();
+                                    },
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter an Cost';
@@ -366,6 +378,9 @@ Widget build(BuildContext context) {
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                     border: OutlineInputBorder(), 
                                   ),
+                                  onChanged: (value) {
+                                    formKey.currentState?.validate();
+                                  },
                                   validator: (_) {
                                     if (receipt.entries.isEmpty) {
                                       return 'Please enter an Item';
@@ -392,6 +407,9 @@ Widget build(BuildContext context) {
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                     border: OutlineInputBorder(), 
                                   ),
+                                  onChanged: (value) {
+                                    formKey.currentState?.validate();
+                                  },
                                   validator: (_) {
                                     if (receipt.entries.isEmpty) {
                                       return 'Please enter a Cost';
