@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> {
       if (joiningReceipt) {
         setState(() {
           codeController.clear();
+          errorMessage = null;
           joiningReceipt = false;
         });
       }
