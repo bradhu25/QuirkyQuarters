@@ -16,7 +16,6 @@ class _HomePageState extends State<HomePage> {
   TextEditingController codeController = TextEditingController();
   String? errorMessage;
 
-  // TODO: [DEV] Dispose text controllers elsewhere in the code.
   @override
   void dispose() {
     codeController.dispose();
@@ -38,7 +37,7 @@ class _HomePageState extends State<HomePage> {
               .doc(code);
     final docSnap = await db.get();
 
-    if (docSnap.data() != null) {
+    if (docSnap.data() != null && mounted) {
       if (!context.mounted) return;
       setState(() {
         joiningReceipt = false;
@@ -55,17 +54,17 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  //TODO: [UI] Change font, background, and buttons to appear more aesthetically pleasing
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
     onTap: () {
       // Close the keyboard if the user taps outside of the TextField
-      FocusScope.of(context).requestFocus(new FocusNode());
+      FocusScope.of(context).requestFocus(FocusNode());
       // Revert back to showing the "Join Receipt" button if in joiningReceipt mode
       if (joiningReceipt) {
         setState(() {
           codeController.clear();
+          errorMessage = null;
           joiningReceipt = false;
         });
       }
@@ -104,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (joiningReceipt) 
-                    Container(
+                    SizedBox(
                       width: 240,
                       child: Row(
                         children: [
@@ -130,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   if (!joiningReceipt)
-                    Container(
+                    SizedBox(
                       width: 240,
                       child: ElevatedButton.icon(
                         icon: Icon(Icons.input), 
