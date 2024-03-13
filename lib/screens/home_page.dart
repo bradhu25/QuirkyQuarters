@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> {
       // Revert back to showing the "Join Receipt" button if in joiningReceipt mode
       if (joiningReceipt) {
         setState(() {
+          codeController.clear();
           joiningReceipt = false;
         });
       }
