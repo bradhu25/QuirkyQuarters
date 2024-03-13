@@ -321,6 +321,7 @@ Widget build(BuildContext context) {
                                   padding: const EdgeInsets.only(right: 36.0),
                                   child: TextFormField(
                                     keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                    textInputAction: TextInputAction.done,
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
@@ -394,6 +395,7 @@ Widget build(BuildContext context) {
                                 padding: const EdgeInsets.only(right: 36.0),
                                 child: TextFormField(
                                   keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  textInputAction: TextInputAction.done,
                                   decoration: InputDecoration(
                                     hintText: 'Enter Cost',
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
@@ -448,6 +450,7 @@ Widget build(BuildContext context) {
                                 width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                                 child: TextFormField(
                                   keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  textInputAction: TextInputAction.done,
                                   controller: taxController,
                                   decoration: InputDecoration(
                                     hintText: 'Enter Tax',
@@ -477,6 +480,7 @@ Widget build(BuildContext context) {
                                 width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                                 child: TextFormField(
                                   keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  textInputAction: TextInputAction.done,
                                   controller: tipController,
                                   decoration: InputDecoration(
                                     hintText: 'Enter Tip',

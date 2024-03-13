@@ -107,7 +107,7 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
         children: [
           ...payerTiles,
           ElevatedButton(
-            child: Text('Next'),
+            child: Text('Square Up'),
             onPressed: () {
               Navigator.push(
                 context,

@@ -110,6 +110,7 @@ class _HomePageState extends State<HomePage> {
                           Expanded(
                             child: TextField(
                               keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.done,
                               controller: codeController,
                               decoration: InputDecoration(
                                 labelText: 'Enter Receipt Code',

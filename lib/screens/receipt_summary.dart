@@ -23,11 +23,16 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
   void initState() {
     super.initState();
     initStateAsync();
+    print("Receipt id $receiptId");
+    print("Receipt: $receipt");
   }
 
   void initStateAsync() async {
+    print("Widget receipt id ${widget.receiptId}");
     Receipt? fetchReceipt = await fetchReceiptData(widget.receiptId);
     if (fetchReceipt != null) {
+
+      print("Fetched receipt  $fetchReceipt");
       setState(() {
         receiptId = widget.receiptId;
         receipt = fetchReceipt;
@@ -139,6 +144,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
           content: TextField(
             controller: divideController,
             keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.done,
             decoration: InputDecoration(hintText: "# of people"),
           ),
           actions: <Widget>[
@@ -409,7 +415,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                         },
                       ),
                     ),
-                    child: Text("Next"),
+                    child: Text("Save"),
                   ),
                 ],
               ),
