@@ -329,8 +329,9 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
             if (!tagging) {
               tagging = true;
             } else {
-                tagging = false;
+              tagging = false;
               payerController.clear();
+              selectedItems.clear();
             }
           });
         },
