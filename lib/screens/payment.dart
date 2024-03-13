@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'home_page.dart';
 import 'package:quirky_quarters/utils.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -12,7 +9,7 @@ class PaymentScreen extends StatefulWidget {
   PaymentScreen({Key? key, required this.receiptId}) : super(key: key);
 
   @override
-  _PaymentScreenState createState() => _PaymentScreenState();
+  State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {

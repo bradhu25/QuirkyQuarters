@@ -1,11 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:quirky_quarters/screens/edit_expense.dart';
 import 'package:quirky_quarters/screens/split_summary.dart';
 import 'package:quirky_quarters/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'home_page.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ReceiptSummaryRoute extends StatefulWidget {
@@ -83,7 +81,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                 padding: const EdgeInsets.only(bottom: 10.0),
                 child: Text(
                   "Share the following code to allow others to join your receipt:",
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
               Padding(
@@ -168,7 +166,6 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
   }
 
   addPayersToDatabase() {
-    // TODO: [DEV] Instead of overwritting entire receipt, change only necessary fields.
     FirebaseFirestore.instance
         .collection('receipt_book')
         .doc(receiptId)
@@ -242,7 +239,6 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                   ],
                 ),
                 SizedBox(height: 10,),
-                // TODO: [DEV] Load expense title in from Firebase
                 Column(
                   children: [
                     // Header Row with Titles
@@ -273,7 +269,6 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                           IconButton(
                             icon: Text('÷', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                             onPressed: () {
-                              // TODO: [DEV] Implement divide entry functionality.
                               showDivideDialog(context, i);
                             },
                           ),
@@ -420,26 +415,6 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
               ),
             ),
           ),
-    );
-  }
-
-  // animation to go back home. can be reused for other home navigations. 
-  // swipes left animation instead of default swipe right animation that Navigator.of(context).pushNamed('/') would do
-  // not currently called but keeping in case helpful for future animations
-  Route _backToHome() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => const HomePage(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(-1.0, 0.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        var offsetAnimation = animation.drive(tween);
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
     );
   }
 

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 
@@ -43,11 +42,13 @@ class _TextScannerPageState extends State<TextScannerPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) => _showRecognizedTextDialog(context, _recognizedText));
     } catch (e) {
       print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('An error occurred when scanning text'),
-        ),
-      );
+            content: Text('An error occurred when scanning text'),
+          ),
+        );
+      }
     }
   }
 

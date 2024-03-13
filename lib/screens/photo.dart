@@ -65,12 +65,14 @@ class _CameraPageState extends State<CameraPage> {
     try {
       await _initializeControllerFuture;
       final image = await _controller!.takePicture();
-      Navigator.push(
+      if (mounted) {
+        Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => DisplayPictureScreen(imagePath: image.path),
-        ),
-      );
+          MaterialPageRoute(
+            builder: (context) => DisplayPictureScreen(imagePath: image.path),
+          ),
+        );
+      }
     } catch (e) {
       print(e); 
     }
@@ -193,7 +195,6 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
             )
           ],
       ),
-      //TODO: [DEV] Figure out how to store image in Firebase and use that URL to text scan
       body: Image.network(widget.imagePath),
       floatingActionButton: FloatingActionButton(
         heroTag: "confirmButton",

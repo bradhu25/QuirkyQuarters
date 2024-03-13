@@ -84,7 +84,6 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     receipt.tip = tip;
     receipt.title = expenseTitleController.text;
 
-    // TODO: [DEV] Consider update vs add case.
     FirebaseFirestore.instance
         .collection('receipt_book')
         .doc(receiptId)
@@ -169,12 +168,12 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     if (!cameraStatus.isGranted) {
       await Permission.camera.request();
     }
-    if (await Permission.camera.isGranted) {
+    if (await Permission.camera.isGranted && mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const CameraPage()),
       );
-    } else {
+    } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Camera permission is required to take pictures")),
       );
@@ -184,7 +183,6 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
 
 @override
 Widget build(BuildContext context) {
-  //TODO: [DEV] Fix deprecation with PopScope
   return WillPopScope(
     onWillPop: () async {
       return await showDialog(
@@ -240,7 +238,7 @@ Widget build(BuildContext context) {
                     ),
                   ),
                   SizedBox(height: 30),
-                  Container(
+                  SizedBox(
                     width: 300,
                     child: TextFormField(
                       controller: fronterController,
@@ -446,7 +444,7 @@ Widget build(BuildContext context) {
                             Text("Tax:", style: Theme.of(context).textTheme.headlineSmall),
                             SizedBox(width: 10), // Space between label and field
                             Flexible(
-                              child: Container(
+                              child: SizedBox(
                                 width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                                 child: TextFormField(
                                   keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -475,7 +473,7 @@ Widget build(BuildContext context) {
                             Text("Tip:", style: Theme.of(context).textTheme.headlineSmall),
                             SizedBox(width: 12), // Space between label and field
                             Flexible(
-                              child: Container(
+                              child: SizedBox(
                                 width: MediaQuery.of(context).size.width / 2 - 20, // Half the screen width minus padding
                                 child: TextFormField(
                                   keyboardType: TextInputType.numberWithOptions(decimal: true),

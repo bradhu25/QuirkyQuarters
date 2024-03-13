@@ -75,9 +75,9 @@ class Receipt<T1> {
 
   @override toString() {
     String receiptString = "";
-    receiptString += "title: ${title}\n";
-    receiptString += "tax: ${tax}\n";
-    receiptString += "tip: ${tip}\n";
+    receiptString += "title: $title\n";
+    receiptString += "tax: $tax\n";
+    receiptString += "tip: $tip\n";
     receiptString += "entries:\n";
     for (var entry in entries) {
       receiptString += "     ${entry.item}, ${entry.cost}, ${entry.payer}\n";
