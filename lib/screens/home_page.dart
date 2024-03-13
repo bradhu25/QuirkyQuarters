@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> {
       // Revert back to showing the "Join Receipt" button if in joiningReceipt mode
       if (joiningReceipt) {
         setState(() {
+          codeController.clear();
           joiningReceipt = false;
         });
       }
@@ -115,8 +116,10 @@ class _HomePageState extends State<HomePage> {
                                 labelText: 'Enter Receipt Code',
                                 errorText: errorMessage,
                               ),
-                              onTapOutside: (_) async { await submitCode(); },
                               onSubmitted: (_) async { await submitCode(); },
+                              onChanged: (_) {
+                                setState(() { errorMessage = null; });
+                              },
                             ),
                           ),
                           IconButton(

@@ -19,7 +19,7 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   String receiptId = generateCode();
   final formKey = GlobalKey<FormState>();
 
-  final TextEditingController expenseTitleController = TextEditingController(text: "Expense #1");
+  final TextEditingController expenseTitleController = TextEditingController();
   final TextEditingController fronterController = TextEditingController(); // for the person who pays the whole bill
   List<TextEditingController> itemControllers = [TextEditingController()];
   List<TextEditingController> costControllers = [TextEditingController()];
@@ -59,8 +59,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
           // Set the fronter and title from the fetched receipt
           fronterController.text = receipt.fronter;
           expenseTitleController.text = receipt.title;
-          taxController.text = receipt.tax != null ? receipt.tax!.toStringAsFixed(2) : "";
-          tipController.text = receipt.tip != null ? receipt.tip!.toStringAsFixed(2) : "";
+          taxController.text = (receipt.tax != null || receipt.tax == 0.0) ? "" : receipt.tax!.toStringAsFixed(2);
+          tipController.text = (receipt.tip != null || receipt.tip == 0.0) ? "" : receipt.tip!.toStringAsFixed(2);
 
           
           for (var entry in receipt.entries) {
@@ -230,6 +230,13 @@ Widget build(BuildContext context) {
                         labelText: 'Expense Title',
                         hintText: 'Expense Title',
                       ),
+                      autovalidateMode: AutovalidateMode.onUserInteraction, 
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a title';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   SizedBox(height: 30),
@@ -241,11 +248,12 @@ Widget build(BuildContext context) {
                         labelText: 'Fronter',
                         border: OutlineInputBorder(),
                       ),
+                      autovalidateMode: AutovalidateMode.onUserInteraction, 
                       validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a Fronter';
-                      }
-                      return null;
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a Fronter';
+                        }
+                        return null;
                       },
                     ),
                   ),
@@ -293,6 +301,7 @@ Widget build(BuildContext context) {
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
                                     ),
+                                    autovalidateMode: AutovalidateMode.onUserInteraction, 
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter an Item';
@@ -300,7 +309,10 @@ Widget build(BuildContext context) {
                                       return null;
                                     },
                                     controller: itemControllers[i],
-                                    onTapOutside: (_) { editItem(i); },
+                                    onTapOutside: (_) { 
+                                      FocusScope.of(context).unfocus();
+                                      editItem(i);
+                                    },
                                     onFieldSubmitted: (_) { editItem(i); },
                                   ),
                                 ),
@@ -315,14 +327,20 @@ Widget build(BuildContext context) {
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
                                     ),
+                                    autovalidateMode: AutovalidateMode.onUserInteraction, 
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter an Cost';
+                                      } else if (num.tryParse(value) == null) {
+                                        return 'Please enter a Cost';
                                       }
                                       return null;
                                     },
                                     controller: costControllers[i],
-                                    onTapOutside: (_) { editCost(i); },
+                                    onTapOutside: (_) { 
+                                      FocusScope.of(context).unfocus();
+                                      editCost(i);
+                                    },
                                     onFieldSubmitted: (_) { editCost(i); },
                                   ),
                                 ),
@@ -354,14 +372,20 @@ Widget build(BuildContext context) {
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                     border: OutlineInputBorder(), 
                                   ),
-                                  validator: (_) {
-                                    if (receipt.entries.isEmpty) {
+                                  autovalidateMode: AutovalidateMode.onUserInteraction, 
+                                  validator: (value) {
+                                    if (itemControllers.length == 1 && (value == null || value.isEmpty)) {
+                                      return 'Please enter an Item';
+                                    } else if (itemControllers.length > 1 && receipt.entries.isEmpty) {
                                       return 'Please enter an Item';
                                     }
                                     return null;
                                   },
                                   controller: itemControllers.last,
-                                  onTapOutside: (_) { addNewItemAndCost(); },
+                                  onTapOutside: (_) { 
+                                    FocusScope.of(context).unfocus();
+                                    addNewItemAndCost();
+                                  },
                                   onFieldSubmitted: (_) { addNewItemAndCost(); },
                                 ),
                               ),
@@ -377,14 +401,23 @@ Widget build(BuildContext context) {
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                     border: OutlineInputBorder(), 
                                   ),
-                                  validator: (_) {
-                                    if (receipt.entries.isEmpty) {
+                                  autovalidateMode: AutovalidateMode.onUserInteraction, 
+                                  validator: (value) {
+                                    if (costControllers.length == 1 && (value == null || value.isEmpty)) {
+                                      return 'Please enter a Cost';
+                                    } else if (costControllers.length > 1 && receipt.entries.isEmpty) {
+                                      return 'Please enter a Cost';
+                                    } else if (value != null && value.isNotEmpty && num.tryParse(value) == null) {
                                       return 'Please enter a Cost';
                                     }
+
                                     return null;
                                   },
                                   controller: costControllers.last,
-                                  onTapOutside: (_){ addNewItemAndCost(); },
+                                  onTapOutside: (_){ 
+                                    FocusScope.of(context).unfocus();
+                                    addNewItemAndCost();
+                                  },
                                   onFieldSubmitted: (_) { addNewItemAndCost(); },
                                 ),
                               ),
@@ -424,6 +457,12 @@ Widget build(BuildContext context) {
                                     isDense: true,
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                   ),
+                                  validator: (value) {
+                                    if (value != null && value.isNotEmpty && num.tryParse(value) == null) {
+                                      return 'Please enter a number';
+                                    }
+                                    return null;
+                                  }
                                 ),
                               ),
                             ),
@@ -447,6 +486,12 @@ Widget build(BuildContext context) {
                                     isDense: true,
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                   ),
+                                  validator: (value) {
+                                    if (value != null && value.isNotEmpty && num.tryParse(value) == null) {
+                                      return 'Please enter a number';
+                                    }
+                                    return null;
+                                  }
                                 ),
                               ),
                             ),

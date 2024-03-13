@@ -155,8 +155,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
               onPressed: () {
                 int numberOfPeople = int.tryParse(divideController.text) ?? 1;
                 setState(() {
-                  receipt.entries[i].cost /= numberOfPeople;
-                  receipt.duplicateEntry(i, numberOfPeople);
+                  receipt.divideEntry(i, numberOfPeople);
                 });
                 divideController.clear();
                 Navigator.of(context).pop();
@@ -330,8 +329,9 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
             if (!tagging) {
               tagging = true;
             } else {
-                tagging = false;
+              tagging = false;
               payerController.clear();
+              selectedItems.clear();
             }
           });
         },
@@ -393,7 +393,7 @@ class _ReceiptSummaryRouteState extends State<ReceiptSummaryRoute> {
                 children: <Widget>[
                   ElevatedButton(
                     onPressed: () {
-                      String code = generateCode();
+                      String code = receiptId;
                       showCodeDialog(context, code);
                     },
                     child: Text("Share Code"),
