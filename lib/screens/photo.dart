@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:quirky_quarters/text_scanner.dart';
+import 'package:quirky_quarters/screens/edit_expense.dart';
+import 'package:quirky_quarters/utils.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({Key? key}) : super(key: key);
@@ -20,7 +23,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
-    _requestPermission();
+    // _requestPermission();
   }
 
   void _requestPermission() async {
@@ -144,44 +147,6 @@ class DisplayPictureScreen extends StatefulWidget {
 
 class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
-  void _showConfirmationDialog() {
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Confirm Image'),
-            content: const Text('Do you want to use this image or retake/upload a new one?'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Retake/Upload'),
-                onPressed: () {
-                  Navigator.of(context).pop(); // Dismiss the dialog
-                  Navigator.of(context).pop(); // Return to the previous screen
-                },
-              ),
-              TextButton(
-                child: const Text('Confirm'),
-                onPressed: () {
-                  Navigator.of(context).pop(); // Dismiss the dialog
-                  // Navigate to the next screen or perform the next action
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TextScannerPage(imagePath: widget.imagePath),
-                    ),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,18 +155,31 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
         actions: [
             IconButton(
               icon: const Icon(Icons.check),
-              onPressed: _showConfirmationDialog,
+              onPressed: () async {
+                
+                  Receipt? parsedReceipt = await processImageToParseReceipt(widget.imagePath);
+
+                  if (parsedReceipt == null && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('An error occurred when scanning text'),
+                      ),
+                    );
+                  } else if (context.mounted) {
+                    // Navigate to the next screen or perform the next action
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditExpenseRoute(parsedReceipt: parsedReceipt),
+                      ),
+                    );
+                  }
+                },
               tooltip: 'Confirm Image',
             )
           ],
       ),
-      body: Image.network(widget.imagePath),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "confirmButton",
-        onPressed: _showConfirmationDialog,
-        tooltip: 'Confirm',
-        child: const Icon(Icons.check),
-      ),
+      body: Image.file(File(widget.imagePath)),
     );
   }
 }

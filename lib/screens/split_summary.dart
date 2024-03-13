@@ -55,6 +55,8 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
     // Create a list of ExpansionTiles for each payer 
     List<Widget> payerTiles = itemsByPayer.entries.map((payer) {
       double rawTotal = payer.value.fold(0, (prev, item) => prev + item.cost);
+      print(rawTotal);
+      print(receipt.total);
       double payerTip = receipt.tip != null ? rawTotal / receipt.total * receipt.tip! : 0;
       double payerTax = receipt.tax != null ? rawTotal / receipt.total * receipt.tax! : 0;
       double payerTotal = rawTotal + payerTip + payerTax;
@@ -62,10 +64,7 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
       return Card(
         child: ExpansionTile(
           title: Text(payer.key),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: Text('Total: \$${payerTotal.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold),),
-          ),
+          subtitle: Text('Total: \$${payerTotal.toStringAsFixed(2)}'),
           children: 
             [  
             ...payer.value.map((entry) {
@@ -110,8 +109,8 @@ class _SplitSummaryRouteState extends State<SplitSummaryRoute> {
             child: Text('Square Up'),
             onPressed: () {
               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PaymentScreen(receiptId: receiptId)),
+                context, 
+                MaterialPageRoute(builder: (context) => PaymentScreen(receiptId: receiptId,)),
               );
             },
           ),

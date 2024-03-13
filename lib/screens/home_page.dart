@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quirky_quarters/screens/edit_expense.dart';
 import 'package:quirky_quarters/screens/view_receipts.dart';
-import 'package:quirky_quarters/screens/split_summary.dart';
+import 'package:quirky_quarters/screens/receipt_summary.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
       });
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => SplitSummaryRoute(receiptId: code,)), 
+        MaterialPageRoute(builder: (context) => ReceiptSummaryRoute(receiptId: code,)), 
       );
     } else {
       setState(() {

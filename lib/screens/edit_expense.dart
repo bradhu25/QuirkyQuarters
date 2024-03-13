@@ -7,7 +7,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 class EditExpenseRoute extends StatefulWidget {
   final String? receiptId;
-  const EditExpenseRoute({super.key, this.receiptId});
+  final Receipt? parsedReceipt;
+  const EditExpenseRoute({super.key, this.receiptId, this.parsedReceipt});
 
   @override
   State<EditExpenseRoute> createState() => _EditExpenseRouteState();
@@ -29,6 +30,9 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
   @override
   void initState() {
     super.initState();
+    if (widget.receiptId == null && widget.parsedReceipt != null) {
+      setReceiptData(widget.parsedReceipt!);
+    }
     initStateAsync();
   }
 
@@ -47,38 +51,43 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
     super.dispose();
   }
 
+
+  void setReceiptData(Receipt providedReceipt) {
+    setState(() {
+      receipt = providedReceipt;
+      List<TextEditingController> existingItems = [];
+      List<TextEditingController> existingCosts = [];
+      // Set the fronter and title from the fetched receipt
+      fronterController.text = receipt.fronter;
+      expenseTitleController.text = receipt.title;
+      taxController.text = (receipt.tax == null || receipt.tax == 0.0) ? "" : receipt.tax!.toStringAsFixed(2);
+      tipController.text = (receipt.tip == null || receipt.tip == 0.0) ? "" : receipt.tip!.toStringAsFixed(2);
+
+      
+      for (var entry in receipt.entries) {
+        existingItems.add(TextEditingController(text: entry.item));
+        existingCosts.add(TextEditingController(text: entry.cost.toStringAsFixed(2)));
+      }
+
+      itemControllers = [...existingItems, TextEditingController()];
+      costControllers = [...existingCosts, TextEditingController()];
+    });
+  }
+
   void initStateAsync() async {
     if (widget.receiptId != null) {
+      setState(() { receiptId = widget.receiptId!; });
       Receipt? fetchReceipt = await fetchReceiptData(widget.receiptId!);
       if (fetchReceipt != null) {
-        setState(() {
-          receiptId = widget.receiptId!;
-          receipt = fetchReceipt;
-          List<TextEditingController> existingItems = [];
-          List<TextEditingController> existingCosts = [];
-          // Set the fronter and title from the fetched receipt
-          fronterController.text = receipt.fronter;
-          expenseTitleController.text = receipt.title;
-          taxController.text = (receipt.tax != null || receipt.tax == 0.0) ? "" : receipt.tax!.toStringAsFixed(2);
-          tipController.text = (receipt.tip != null || receipt.tip == 0.0) ? "" : receipt.tip!.toStringAsFixed(2);
-
-          
-          for (var entry in receipt.entries) {
-            existingItems.add(TextEditingController(text: entry.item));
-            existingCosts.add(TextEditingController(text: entry.cost.toStringAsFixed(2)));
-          }
-
-          itemControllers = [...existingItems, TextEditingController()];
-          costControllers = [...existingCosts, TextEditingController()];
-        });
+        setReceiptData(fetchReceipt);
       }
     }
   }
 
   addExpensesToDatabase() {
     var fronter = fronterController.text;
-    var tax = double.tryParse(taxController.text);
-    var tip = double.tryParse(tipController.text);
+    double? tax = double.tryParse(taxController.text);
+    double? tip = double.tryParse(tipController.text);
     receipt.fronter = fronter;
     receipt.tax = tax;
     receipt.tip = tip;
@@ -164,20 +173,20 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
 
 
   Future<void> _handleCameraPermissionAndNavigate() async {
-    final cameraStatus = await Permission.camera.status;
-    if (!cameraStatus.isGranted) {
-      await Permission.camera.request();
-    }
-    if (await Permission.camera.isGranted && mounted) {
+    // final cameraStatus = await Permission.camera.status;
+    // if (!cameraStatus.isGranted) {
+    //   await Permission.camera.request();
+    // }
+    // if (await Permission.camera.isGranted && mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const CameraPage()),
       );
-    } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Camera permission is required to take pictures")),
-      );
-    }
+    // } else if (mounted) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text("Camera permission is required to take pictures")),
+    //   );
+    // }
   }
 
 

@@ -1,94 +1,143 @@
-import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:quirky_quarters/utils.dart';
 
-class TextScannerPage extends StatefulWidget {
-  final String imagePath;
+RegExp basicAmountPattern = RegExp(r'^.*?(\d+\.\d{2}).*$');
 
-  const TextScannerPage({Key? key, required this.imagePath}) : super(key: key);
-
-  @override
-  State<TextScannerPage> createState() => _TextScannerPageState();
-}
-
-class _TextScannerPageState extends State<TextScannerPage> {
-  String _recognizedText = "Scanning...";
+Future<Receipt?> processImageToParseReceipt(String imagePath) async {
+  Set<List<String>> parsedTextWIP = {};
   final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
 
-  @override
-  void initState() {
-    super.initState();
-    _performTextRecognition();
-  }
-
-  @override
-  void dispose() {
-    textRecognizer.close();
-    super.dispose();
-  }
-
-  Future<void> _performTextRecognition() async {
-    try {
-      final inputImage = InputImage.fromFilePath(widget.imagePath);
+  try {
+      final inputImage = InputImage.fromFilePath(imagePath);
       final recognizedText = await textRecognizer.processImage(inputImage);
-        
-      setState(() {
-        print("Recognized text before: $_recognizedText");
-        _recognizedText = recognizedText.text;
-        print("Recognized text after: $_recognizedText");
-      });
+      parsedTextWIP = parseTextIntoLines(recognizedText);
+      parsedTextWIP = filterLinesWithAmounts(parsedTextWIP);
+      parsedTextWIP = filterOutTotals(parsedTextWIP);
+      return parseIntoReceipt(parsedTextWIP);
 
-      
-      // Show the dialog after text recognition
-      WidgetsBinding.instance.addPostFrameCallback((_) => _showRecognizedTextDialog(context, _recognizedText));
-    } catch (e) {
+  } catch (e) {
       print(e);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('An error occurred when scanning text'),
-          ),
-        );
+      return null;
+  }
+}
+
+Set<List<String>> parseTextIntoLines(RecognizedText text) {
+  int tolerance = 50;
+  Map<double, List<String>> rows = {};
+
+  for (TextBlock block in text.blocks) {
+    for (TextLine line in block.lines) {
+      
+      final double rightValue = line.boundingBox.right;
+
+      List<String>? foundRow;
+
+      for (double rowRight in rows.keys){         
+          if((rowRight - rightValue).abs() <= tolerance){
+              foundRow = rows[rowRight];
+              break;
+          }
+      }
+
+      foundRow ??= [];
+      rows[rightValue] = foundRow;
+      foundRow.add(line.text);
+    }
+  }
+
+  Set<List<String>> combinedLines = {};
+  for (List<String> lines in rows.values) {
+    combinedLines.add(lines);
+  }
+
+  return combinedLines;
+}
+
+Set<List<String>> filterLinesWithAmounts(Set<List<String>> text) {
+  Set<List<String>> filtered = {};
+
+  for (List<String> list in text) {
+    for (int i = 0; i < list.length; i++) {
+      Match? match = basicAmountPattern.firstMatch(list[i]);
+      if (match != null) {
+        // Clean up list before adding it.
+        list[i] = match.group(1)!;
+        
+        if (!list[0].contains("%")) {
+          filtered.add(list);
+        }
+
+        break;
       }
     }
   }
 
-  void _showRecognizedTextDialog(BuildContext context, String text) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Recognized Text'),
-          content: SingleChildScrollView(
-            child: Text(text),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
+  return filtered;
+}
+
+Set<List<String>> filterOutTotals(Set<List<String>> text) {
+  // Track total, substotal, balance due, etc.
+  double maxAmount = -1;
+  Set<List<String>> maxAmountLists = {};
+  double secondMaxAmount = -1;
+  Set<List<String>> secondMaxAmountLists = {};
+
+  for (List<String> list in text) {
+    for (String elem in list) {
+        Match? match = basicAmountPattern.firstMatch(elem);
+        if (match != null) {
+          double amount = double.parse(match.group(1)!);
+          if (amount > maxAmount) {
+            secondMaxAmount = maxAmount;
+            secondMaxAmountLists = maxAmountLists;
+            maxAmount = amount;
+            maxAmountLists = {list};
+          } else if (amount == maxAmount) {
+            maxAmountLists.add(list);
+          } else if (amount > secondMaxAmount && amount < maxAmount) {
+            secondMaxAmount = amount;
+            secondMaxAmountLists = {list};
+          } else if (amount == secondMaxAmount) {
+            secondMaxAmountLists.add(list);
+          }
+          break;
+        }
+    }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Text Scanner'),
-      ),
-      body: Center(
-        child: _recognizedText == "Scanning..."
-            ? Image.network(widget.imagePath)
-            : Text(_recognizedText)
-            // ? const CircularProgressIndicator()
-            // : SingleChildScrollView(
-            //     child: Text(_recognizedText),
-            //   ),
-      ),
-    );
+  // Remove max amount found since it is likely to be the total.
+  for (List<String> list in maxAmountLists) {
+    text.remove(list);
   }
+
+  // Remove second max amount found since it is likely to be the subtotal.
+  for (List<String> list in secondMaxAmountLists) {
+    text.remove(list);
+  }
+
+  return text;
+}
+
+Receipt parseIntoReceipt(Set<List<String>> text) {
+  Receipt receipt = Receipt.emptyReceipt();
+  double total = 0.0;
+  for (List<String> list in text) {
+    if (list.length < 2) {
+      continue;
+    }
+    
+    String item = list[0];
+    double cost = double.parse(list[1]);
+
+    if (item.toLowerCase().contains("tax")) {
+      receipt.tax = cost;
+    } else {
+      total += cost;
+      receipt.entries.add(ItemCostPayer(item: item, cost: cost, payer: null));
+    }
+  }
+
+  receipt.title = "";
+  receipt.total = total;
+  return receipt;
 }
