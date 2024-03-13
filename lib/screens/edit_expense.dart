@@ -173,20 +173,20 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
 
 
   Future<void> _handleCameraPermissionAndNavigate() async {
-    // final cameraStatus = await Permission.camera.status;
-    // if (!cameraStatus.isGranted) {
-    //   await Permission.camera.request();
-    // }
-    // if (await Permission.camera.isGranted && mounted) {
+    final cameraStatus = await Permission.camera.status;
+    if (!cameraStatus.isGranted) {
+      await Permission.camera.request();
+    }
+    if (await Permission.camera.isGranted && mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const CameraPage()),
       );
-    // } else if (mounted) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text("Camera permission is required to take pictures")),
-    //   );
-    // }
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Camera permission is required to take pictures")),
+      );
+    }
   }
 
 

@@ -23,7 +23,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
-    // _requestPermission();
+    _requestPermission();
   }
 
   void _requestPermission() async {
