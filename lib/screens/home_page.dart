@@ -51,7 +51,6 @@ class _HomePageState extends State<HomePage> {
     } else {
       setState(() {
         errorMessage = 'Invalid code.';
-        codeController.clear();
       });
     }
   }
