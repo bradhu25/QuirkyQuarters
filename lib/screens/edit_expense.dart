@@ -59,8 +59,8 @@ class _EditExpenseRouteState extends State<EditExpenseRoute> {
           // Set the fronter and title from the fetched receipt
           fronterController.text = receipt.fronter;
           expenseTitleController.text = receipt.title;
-          taxController.text = receipt.tax != null ? receipt.tax!.toStringAsFixed(2) : "";
-          tipController.text = receipt.tip != null ? receipt.tip!.toStringAsFixed(2) : "";
+          taxController.text = (receipt.tax != null || receipt.tax == 0.0) ? "" : receipt.tax!.toStringAsFixed(2);
+          tipController.text = (receipt.tip != null || receipt.tip == 0.0) ? "" : receipt.tip!.toStringAsFixed(2);
 
           
           for (var entry in receipt.entries) {
@@ -230,9 +230,7 @@ Widget build(BuildContext context) {
                         labelText: 'Expense Title',
                         hintText: 'Expense Title',
                       ),
-                      onChanged: (value) {
-                        formKey.currentState?.validate();
-                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction, 
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a title';
@@ -250,9 +248,7 @@ Widget build(BuildContext context) {
                         labelText: 'Fronter',
                         border: OutlineInputBorder(),
                       ),
-                      onChanged: (value) {
-                        formKey.currentState?.validate();
-                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction, 
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a Fronter';
@@ -305,9 +301,7 @@ Widget build(BuildContext context) {
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
                                     ),
-                                    onChanged: (value) {
-                                      formKey.currentState?.validate();
-                                    },
+                                    autovalidateMode: AutovalidateMode.onUserInteraction, 
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter an Item';
@@ -333,12 +327,12 @@ Widget build(BuildContext context) {
                                       contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                       border: OutlineInputBorder(), 
                                     ),
-                                    onChanged: (value) {
-                                      formKey.currentState?.validate();
-                                    },
+                                    autovalidateMode: AutovalidateMode.onUserInteraction, 
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter an Cost';
+                                      } else if (num.tryParse(value) == null) {
+                                        return 'Please enter a Cost';
                                       }
                                       return null;
                                     },
@@ -378,11 +372,11 @@ Widget build(BuildContext context) {
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                     border: OutlineInputBorder(), 
                                   ),
-                                  onChanged: (value) {
-                                    formKey.currentState?.validate();
-                                  },
-                                  validator: (_) {
-                                    if (receipt.entries.isEmpty) {
+                                  autovalidateMode: AutovalidateMode.onUserInteraction, 
+                                  validator: (value) {
+                                    if (itemControllers.length == 1 && (value == null || value.isEmpty)) {
+                                      return 'Please enter an Item';
+                                    } else if (itemControllers.length > 1 && receipt.entries.isEmpty) {
                                       return 'Please enter an Item';
                                     }
                                     return null;
@@ -407,13 +401,16 @@ Widget build(BuildContext context) {
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                     border: OutlineInputBorder(), 
                                   ),
-                                  onChanged: (value) {
-                                    formKey.currentState?.validate();
-                                  },
-                                  validator: (_) {
-                                    if (receipt.entries.isEmpty) {
+                                  autovalidateMode: AutovalidateMode.onUserInteraction, 
+                                  validator: (value) {
+                                    if (costControllers.length == 1 && (value == null || value.isEmpty)) {
+                                      return 'Please enter a Cost';
+                                    } else if (costControllers.length > 1 && receipt.entries.isEmpty) {
+                                      return 'Please enter a Cost';
+                                    } else if (value != null && value.isNotEmpty && num.tryParse(value) == null) {
                                       return 'Please enter a Cost';
                                     }
+
                                     return null;
                                   },
                                   controller: costControllers.last,
@@ -460,6 +457,12 @@ Widget build(BuildContext context) {
                                     isDense: true,
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                   ),
+                                  validator: (value) {
+                                    if (value != null && value.isNotEmpty && num.tryParse(value) == null) {
+                                      return 'Please enter a number';
+                                    }
+                                    return null;
+                                  }
                                 ),
                               ),
                             ),
@@ -483,6 +486,12 @@ Widget build(BuildContext context) {
                                     isDense: true,
                                     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                                   ),
+                                  validator: (value) {
+                                    if (value != null && value.isNotEmpty && num.tryParse(value) == null) {
+                                      return 'Please enter a number';
+                                    }
+                                    return null;
+                                  }
                                 ),
                               ),
                             ),

@@ -117,6 +117,9 @@ class _HomePageState extends State<HomePage> {
                                 errorText: errorMessage,
                               ),
                               onSubmitted: (_) async { await submitCode(); },
+                              onChanged: (_) {
+                                setState(() { errorMessage = null; });
+                              },
                             ),
                           ),
                           IconButton(
