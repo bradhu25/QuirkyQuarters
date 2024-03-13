@@ -116,7 +116,6 @@ class _HomePageState extends State<HomePage> {
                                 labelText: 'Enter Receipt Code',
                                 errorText: errorMessage,
                               ),
-                              onTapOutside: (_) async { await submitCode(); },
                               onSubmitted: (_) async { await submitCode(); },
                             ),
                           ),
